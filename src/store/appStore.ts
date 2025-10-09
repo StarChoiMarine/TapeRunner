@@ -17,8 +17,8 @@ type AppState = {
 
 export const useAppStore = create<AppState>((set) => ({
   isConnected: true,
-  batteryLeft: 100,
-  batteryRight: 98,
+  batteryLeft: 70,
+  batteryRight: 65,
   recentRuns: 5,
   ankleState: '안전',
   setConnection: (v) => set({ isConnected: v }),
