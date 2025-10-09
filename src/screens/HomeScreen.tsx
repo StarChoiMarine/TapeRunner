@@ -8,7 +8,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 export default function HomeScreen({ navigation }: Props) {
   return (
     <View style={{ flex:1, alignItems:'center', justifyContent:'center', gap:16 }}>
-      <Text style={{ fontSize:22, fontWeight:'800' }}>로그인 성공 (데모)</Text>
+      <Text style={{ fontSize:22, fontWeight:'800' }}>지금도 연결됐나? (데모)</Text>
       <Text style={{ color:'#666' }}>여기서 러닝 모니터/장치연결/가이드로 확장</Text>
       <TouchableOpacity
         onPress={() => navigation.replace('Login')}
