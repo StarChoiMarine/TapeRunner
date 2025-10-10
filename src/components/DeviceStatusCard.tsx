@@ -166,16 +166,16 @@ export default function DeviceStatusCard() {
 
         <View style={{ alignItems: 'center' }}>
 
-            <View style={{ flexDirection: 'row', gap: 20, alignItems: 'center' }}>
+            <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
             <FootIcon
                 side="L"
                 color={isConnected ? batteryColor(batteryLeft) : MUTED}
-                boxW={80} boxH={110} scale={1.55}   // 레이아웃은 80x110, 보이는 건 1.35배
+                boxW={100} boxH={110} scale={1.55}   // 레이아웃은 80x110, 보이는 건 1.35배
             />
             <FootIcon
                 side="R"
                 color={isConnected ? batteryColor(batteryRight) : MUTED}
-                boxW={80} boxH={110} scale={1.55}
+                boxW={100} boxH={110} scale={1.55}
             />
             </View>
 
