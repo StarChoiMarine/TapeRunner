@@ -2,7 +2,7 @@
 import React from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useAppStore } from '../store/AppStore';
+import { useAppStore } from '../store/appStore';
 import Svg, { Circle } from 'react-native-svg';
 
 const footImg = require('../assets/foot-right.png'); // 오른발 실루엣 PNG
