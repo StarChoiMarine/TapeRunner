@@ -23,11 +23,24 @@ const clamp01 = (v: unknown) => {
   return Math.max(0, Math.min(1, n));
 };
 
+// 압력값(t: 0~1)에 따라 초록→노랑→빨강으로 색상 변화
 const colorFor = (t: number) => {
   const x = Math.max(0, Math.min(1, t));
-  const r = Math.round(255 * Math.max(0, Math.min(1, (x - 0.5) * 2)));
-  const g = Math.round(255 * (1 - Math.abs(x - 0.5) * 2));
-  const b = Math.round(255 * Math.max(0, Math.min(1, (0.5 - x) * 2)));
+
+  let r, g, b;
+
+  if (x < 0.5) {
+    // 0.0 ~ 0.5 구간: 초록(0,255,0) → 노랑(255,255,0)
+    r = Math.round(510 * x);     // 0 → 255
+    g = 200;                     // 항상 밝은 초록 유지
+    b = 0;
+  } else {
+    // 0.5 ~ 1.0 구간: 노랑(255,255,0) → 빨강(255,0,0)
+    r = 255;
+    g = Math.round(255 - 510 * (x - 0.5)); // 255 → 0
+    b = 0;
+  }
+
   return `rgb(${r},${g},${b})`;
 };
 
@@ -79,8 +92,8 @@ const FootDots: React.FC<Props> = ({
           }
 
           // 값이 있을 때는 컬러 + 하이라이트 + (선택)글로우
-          const rx = radius * (0.9 + 0.5 * v);
-          const ry = radius * (0.55 + 0.4 * v);
+          const rx = radius * (0.55 + 0.2 * v);
+          const ry = radius * (0.75 + 0.2 * v);
           const fill = colorFor(v);
 
           return (
@@ -108,8 +121,8 @@ const FootDots: React.FC<Props> = ({
               <Ellipse
                 cx={cx}
                 cy={cy}
-                rx={rx * 0.45}
-                ry={ry * 0.35}
+                rx={rx * 0.33}
+                ry={ry * 0.33}
                 origin={`${cx},${cy}`}
                 fill="#fff"
                 opacity={0.25}
