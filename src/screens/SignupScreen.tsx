@@ -1,24 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, KeyboardAvoidingView, Platform
 } from 'react-native';
-
-import { getApp } from '@react-native-firebase/app';
-import {
-  getAuth,
-  createUserWithEmailAndPassword
-} from '@react-native-firebase/auth';
-import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  getDocs,
-  doc,
-  setDoc,
-  serverTimestamp
-} from '@react-native-firebase/firestore';
-
+import SQLite from 'react-native-sqlite-storage';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../App';
 
@@ -27,20 +11,45 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Signup'>;
 const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const isNickname = (v: string) => /^[a-zA-Z0-9가-힣]{2,10}$/.test(v);
 
+SQLite.enablePromise(true);
+
 export default function SignupScreen({ navigation }: Props) {
   const [email, setEmail] = useState('');
   const [nickname, setNickname] = useState('');
   const [pw, setPw] = useState('');
   const [pw2, setPw2] = useState('');
   const [loading, setLoading] = useState(false);
+  const [db, setDb] = useState<SQLite.SQLiteDatabase | null>(null);
+
+  // DB 초기화
+  useEffect(() => {
+    const initDB = async () => {
+      try {
+        const database = await SQLite.openDatabase({ name: 'taperunner.db', location: 'default' });
+        await database.executeSql(`
+          CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE NOT NULL,
+            nickname TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            created_at TEXT NOT NULL
+          );
+        `);
+        setDb(database);
+      } catch (e) {
+        console.error('DB 초기화 오류:', e);
+      }
+    };
+    initDB();
+  }, []);
 
   const onSignup = async () => {
-    if (!email || !nickname || !pw) {
+    if (!email || !nickname || !pw || !pw2) {
       Alert.alert('오류', '모든 필드를 입력해주세요.');
       return;
     }
     if (!isEmail(email)) {
-      Alert.alert('오류', '이메일의 형식이 올바르지 않습니다.');
+      Alert.alert('오류', '이메일 형식이 올바르지 않습니다.');
       return;
     }
     if (!isNickname(nickname)) {
@@ -52,46 +61,41 @@ export default function SignupScreen({ navigation }: Props) {
       return;
     }
 
+    if (!db) {
+      Alert.alert('오류', '데이터베이스 연결 실패');
+      return;
+    }
+
     try {
       setLoading(true);
 
-      const app = getApp();
-      const db = getFirestore(app);
-      const auth = getAuth(app);
+      // 이메일 중복 검사
+      const [emailCheck] = await db.executeSql(`SELECT * FROM users WHERE email = ?`, [email]);
+      if (emailCheck.rows.length > 0) {
+        Alert.alert('오류', '이미 사용 중인 이메일입니다.');
+        setLoading(false);
+        return;
+      }
 
-      // 닉네임 중복 확인
-      const q = query(collection(db, 'users'), where('nickname', '==', nickname));
-      const snapshot = await getDocs(q);
-      if (!snapshot.empty) {
+      // 닉네임 중복 검사
+      const [nicknameCheck] = await db.executeSql(`SELECT * FROM users WHERE nickname = ?`, [nickname]);
+      if (nicknameCheck.rows.length > 0) {
         Alert.alert('오류', '이미 사용 중인 닉네임입니다.');
         setLoading(false);
         return;
       }
 
-      // 이메일로 회원가입
-      const userCredential = await createUserWithEmailAndPassword(auth, email, pw);
-      const { uid } = userCredential.user;
-
-      // Firestore에 사용자 데이터 저장
-      await setDoc(doc(db, 'users', uid), {
-        nickname,
-        email,
-        created_At: serverTimestamp(),
-      });
+      // 신규 사용자 저장
+      await db.executeSql(
+        `INSERT INTO users (email, nickname, password, created_at) VALUES (?, ?, ?, ?)`,
+        [email, nickname, pw, new Date().toISOString()]
+      );
 
       Alert.alert('가입 완료', '이제 로그인해주세요.');
       navigation.replace('Login');
-    } catch (error: any) {
-      console.error(error);
-      if (error.code === 'auth/email-already-in-use') {
-        Alert.alert('오류', '이미 사용 중인 이메일입니다.');
-      } else if (error.code === 'auth/weak-password') {
-        Alert.alert('오류', '비밀번호는 6자 이상이어야 합니다.');
-      } else if (error.code === 'auth/configuration-not') {
-        Alert.alert('오류', 'Firebase 설정을 찾을 수 없습니다. google-services.json을 확인하세요.');
-      } else {
-        Alert.alert('오류', '회원가입 중 문제가 발생했습니다.');
-      }
+    } catch (error) {
+      console.error('회원가입 오류:', error);
+      Alert.alert('오류', '회원가입 중 문제가 발생했습니다.');
     } finally {
       setLoading(false);
     }
