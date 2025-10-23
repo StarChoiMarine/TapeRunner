@@ -160,7 +160,7 @@ export default function SignupScreen({ navigation }: Props) {
         </TouchableOpacity>
 
         <View style={{ flexDirection:'row', justifyContent:'center', gap:8 }}>
-          <Text>이미 계정이 있으신가요?</Text>
+          <Text>이미 계정이 있으신가요??</Text>
           <TouchableOpacity onPress={() => navigation.replace('Login')}>
             <Text style={{ color:'#007aff', fontWeight:'600' }}>로그인</Text>
           </TouchableOpacity>
