@@ -1,3 +1,11 @@
+.env
+*.env
+*.env.*
+node_modules
+android/.gradle
+ios/Pods
+dist
+build
 # OSX
 #
 .DS_Store
