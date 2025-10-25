@@ -1,5 +1,8 @@
 // App.tsx
 import * as React from 'react';
+import { BleProvider } from './src/store/ble/BleProvider';
+
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -24,6 +27,9 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (
+
+
+    <BleProvider>
     <SafeAreaProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
@@ -36,5 +42,6 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
+    </BleProvider>
   );
 }
