@@ -7,18 +7,25 @@ export default function RunningScreen() {
   const [leftVals]  = useState<Record<number, number>>({
 
 
+    10:0, 9:0, 
+    20:0.82, 12: 0.85, 8:0.35,  
+    19:0.9, 16:0.77, 7:0.4,  
+    18:0.9, 15:0.6, 2: 0.77,  
+    17:0.7, 13: 0.9, 3:0.25,
+    4: 0, 5: 0
+    
+  });
+  const [rightVals] = useState<Record<number, number>>({
+
     9:0, 10:0,
     8:0.35, 12: 0.85, 20:0.82,
     7:0.4, 16:0.77, 19:0.9,
     2: 0.77, 15:0.6, 18:0.9,
     3:0.25, 13: 0.9, 17:0.7,
     5: 0 , 4: 0
-    
-
 
 
   });
-  const [rightVals] = useState<Record<number, number>>({});
 
   return (
     <View style={{ flex:1, padding:16, backgroundColor:'#EEF5E8' }}>
