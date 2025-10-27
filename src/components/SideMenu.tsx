@@ -147,7 +147,7 @@ export default function SideMenu({ open, onClose, userName = '사용자' }: Prop
         </View>
 
         <Item label="러닝" to="Home" />
-        <Item label="테이핑" to="Analysis" />
+        <Item label="테이핑" to="Video" />
         <Item label="내 자세 분석" to="Analysis" />
         <Item label="기기 연결" to="DeviceConnect" />
 
