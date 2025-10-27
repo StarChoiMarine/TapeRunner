@@ -10,14 +10,16 @@ import HomeScreen from './src/screens/HomeScreen';
 import RunningScreen from './src/screens/RunningScreen';
 import DeviceConnectScreen from './src/screens/DeviceConnectScreen';
 import AnalysisScreen from './src/screens/AnalysisScreen';
+import VideoPlayerScreen from './src/screens/VideoPlayerScreen';
 
 export type RootStackParamList = {
   Login: undefined;
   Signup: undefined;
-  Home: undefined;
+  Home: { userName: string };
   Running: undefined;
   DeviceConnect: undefined;
   Analysis: undefined;
+  VideoPlayer: { url: string; title: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -33,6 +35,7 @@ export default function App() {
           <Stack.Screen name="Running" component={RunningScreen} />
           <Stack.Screen name="DeviceConnect" component={DeviceConnectScreen} />
           <Stack.Screen name="Analysis" component={AnalysisScreen} />
+          <Stack.Screen name="VideoPlayer" component={VideoPlayerScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

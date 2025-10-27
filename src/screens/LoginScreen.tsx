@@ -3,6 +3,7 @@ import {
   View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, KeyboardAvoidingView, Platform
 } from 'react-native';
 import SQLite from 'react-native-sqlite-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../App';
 
@@ -24,7 +25,6 @@ export default function LoginScreen({ navigation }: Props) {
     const initDB = async () => {
       try {
         const database = await SQLite.openDatabase({ name: 'taperunner.db', location: 'default' });
-        // 테이블이 없으면 생성 (안전조치)
         await database.executeSql(`
           CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,6 +40,21 @@ export default function LoginScreen({ navigation }: Props) {
       }
     };
     initDB();
+
+    // 앱 실행 시 자동 로그인 시도
+    const checkLoginStatus = async () => {
+      try {
+        const storedUser = await AsyncStorage.getItem('loggedInUser');
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          console.log('자동 로그인 사용자:', user.email);
+          navigation.replace('Home', { userName: user.nickname });
+        }
+      } catch (err) {
+        console.error('자동 로그인 확인 오류:', err);
+      }
+    };
+    checkLoginStatus();
   }, []);
 
   const onLogin = async () => {
@@ -60,7 +75,6 @@ export default function LoginScreen({ navigation }: Props) {
     try {
       setLoading(true);
 
-      // 이메일로 사용자 조회
       const [results] = await db.executeSql(`SELECT * FROM users WHERE email = ?`, [email]);
 
       if (results.rows.length === 0) {
@@ -76,9 +90,15 @@ export default function LoginScreen({ navigation }: Props) {
         return;
       }
 
-      // 로그인 성공
+      // ✅ 로그인 성공 시 사용자 정보 저장
+      await AsyncStorage.setItem('loggedInUser', JSON.stringify({
+        id: user.id,
+        email: user.email,
+        nickname: user.nickname,
+      }));
+
       Alert.alert('환영합니다!', `${user.nickname}님, 로그인 성공`);
-      navigation.replace('Home');
+      navigation.replace('Home', { userName: user.nickname });
     } catch (error) {
       console.error('로그인 오류:', error);
       Alert.alert('오류', '로그인 중 문제가 발생했습니다.');
