@@ -8,10 +8,6 @@ import Svg, { Circle } from 'react-native-svg';
 // ✅ 전역 BLE 훅(평면 키로 값 제공: battL/battR, isLeftConnected/isRightConnected 등)
 import { useBle } from '../store/ble/BleProvider';
 
-// 기존 임시/파생 상태는 AppStore에서 계속 가져오되,
-// 연결/배터리는 BLE 값이 있으면 우선 사용
-import { useAppStore } from '../store/AppStore';
-
 
 
 const footImg = require('../assets/foot-right.png'); // 오른발 실루엣 PNG

@@ -1,6 +1,6 @@
 // src/screens/AnalysisScreen.tsx
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import SensorHeatmapView from '../components/SensorHeatmapView';
 import AIAnalysisCard from '../components/AIAnalysisCard';
@@ -21,7 +21,7 @@ export default function AnalysisScreen() {
       </View>
 
       {selected ? (
-        <View style={{ padding: 16, gap: 16 }}>
+        <ScrollView contentContainerStyle={{ padding: 16, gap: 16 }}>
           {/* 센서 히트맵 */}
           <View style={{ backgroundColor: '#fff', borderRadius: 16, padding: 16 }}>
             <Text style={{ fontSize: 16, fontWeight: '700', marginBottom: 8 }}>센서 히트맵</Text>
@@ -33,7 +33,7 @@ export default function AnalysisScreen() {
 
           {/* 테이핑 추천 */}
           <RecommendedTapeCard session={selected} />
-        </View>
+        </ScrollView>
       ) : (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Text>세션 데이터가 없습니다.</Text>

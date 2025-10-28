@@ -3,7 +3,7 @@ import { ActivityIndicator, Text, View } from 'react-native';
 import type { AIAnalysisResult, RunSession } from '../types/analysis';
 import { requestAnalysis } from '../services/ai';
 import { hasFinalAnalysis, saveFinalAnalysis } from '../services/db';
-import { deriveTapeRecommendation } from '../data/mockSessions';
+import { deriveRecommendation } from '../services/recommendation';
 
 export default function AIAnalysisCard({ session }: { session: RunSession }) {
   const [loading, setLoading] = useState(true);
@@ -25,8 +25,8 @@ export default function AIAnalysisCard({ session }: { session: RunSession }) {
             // 중복 저장 방지
             const exists = await hasFinalAnalysis(session.id);
             if (exists) return;
-            const reco = deriveTapeRecommendation(session);
-            const tapeUrl = reco.videos[0]?.videoUrl ?? null;
+            const reco = deriveRecommendation(session);
+            const tapeUrl = reco.videos[0]?.url ?? null;
             await saveFinalAnalysis({
               sessionId: session.id,
               startedAt: session.startedAt,

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, Pressable, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { getAllFinalAnalyses } from '../services/db';
+import { formatKSTDate, formatKSTTime, getKSTYearMonth } from '../utils/kst';
 
 type MonthKey = { year: number; month: number }; // month: 1~12
 
@@ -32,8 +33,8 @@ export default function ActivityScreen() {
 
   const filtered = useMemo(() => {
     return items.filter((it) => {
-      const d = new Date(it.startedAt);
-      return d.getFullYear() === month.year && d.getMonth() + 1 === month.month;
+      const { year, month: m } = getKSTYearMonth(it.startedAt);
+      return year === month.year && m === month.month;
     });
   }, [items, month]);
 
@@ -76,9 +77,8 @@ export default function ActivityScreen() {
         keyExtractor={(i) => String(i.id)}
         contentContainerStyle={{ padding: 16, gap: 12 }}
         renderItem={({ item }) => {
-          const started = new Date(item.startedAt);
-          const date = started.toLocaleDateString();
-          const time = started.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const date = formatKSTDate(item.startedAt);
+          const time = formatKSTTime(item.startedAt);
           return (
             <Pressable
               onPress={() => nav.navigate('AnalysisDetail', { id: item.id })}

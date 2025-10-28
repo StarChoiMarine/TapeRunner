@@ -3,6 +3,7 @@ import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { getAllFinalAnalyses } from '../services/db';
 import SensorHeatmapView from '../components/SensorHeatmapView';
+import { formatKSTDate, formatKSTTime } from '../utils/kst';
 
 export default function AnalysisDetailScreen() {
   const nav = useNavigation<any>();
@@ -30,7 +31,8 @@ export default function AnalysisDetailScreen() {
     );
   }
 
-  const started = new Date(row.startedAt);
+  const startedDate = formatKSTDate(row.startedAt);
+  const startedTime = formatKSTTime(row.startedAt);
 
   return (
     <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
@@ -45,7 +47,7 @@ export default function AnalysisDetailScreen() {
       <ScrollView contentContainerStyle={{ padding: 16, gap: 16 }}>
         <View style={{ backgroundColor: '#fff', borderRadius: 16, padding: 16 }}>
           <Text style={{ fontSize: 16, fontWeight: '700', marginBottom: 6 }}>세션</Text>
-          <Text style={{ color: '#374151' }}>{started.toLocaleString()}</Text>
+          <Text style={{ color: '#374151' }}>{startedDate} {startedTime}</Text>
           <Text style={{ color: '#6B7280' }}>길이: {Math.round((row.durationSec || 0) / 60)}분</Text>
         </View>
 
@@ -64,7 +66,7 @@ export default function AnalysisDetailScreen() {
             onPress={() => nav.navigate('VideoPlayer', { url: row.tapeVideoUrl, title: '추천 테이핑' })}
             style={{ backgroundColor: '#2563EB', paddingVertical: 12, borderRadius: 12, alignItems: 'center' }}
           >
-            <Text style={{ color: 'white', fontWeight: '700' }}>추천 영상 보기</Text>
+            <Text style={{ color: 'white', fontWeight: '700' }}>추천 테이핑 영상 보기</Text>
           </Pressable>
         ) : null}
       </ScrollView>

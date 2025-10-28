@@ -4,6 +4,7 @@ import { View, Text, Switch, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import FootDots from '../components/FootDots';
 import { useBle } from '../store/ble/BleProvider';
+import type { RunSession } from '../types/analysis';
 
 type SensorMap = Record<number, number>;
 
@@ -21,6 +22,7 @@ export default function RunningScreen() {
   const sumR = useRef<Record<number, number>>({});
   const cntL = useRef<Record<number, number>>({});
   const cntR = useRef<Record<number, number>>({});
+  const runStartRef = useRef<number | null>(null);
 
   // 발별로 새 프레임 들어올 때마다 누적 (일시정지 중이면 무시)
   useEffect(() => {
@@ -32,6 +34,7 @@ export default function RunningScreen() {
       sumL.current[sid] = (sumL.current[sid] ?? 0) + (Number(v) || 0);
       cntL.current[sid] = (cntL.current[sid] ?? 0) + 1;
     }
+    if (!runStartRef.current) runStartRef.current = Date.now();
   }, [leftVals, isPaused]);
 
   useEffect(() => {
@@ -43,6 +46,7 @@ export default function RunningScreen() {
       sumR.current[sid] = (sumR.current[sid] ?? 0) + (Number(v) || 0);
       cntR.current[sid] = (cntR.current[sid] ?? 0) + 1;
     }
+    if (!runStartRef.current) runStartRef.current = Date.now();
   }, [rightVals, isPaused]);
 
   // 평균 계산 유틸
@@ -62,24 +66,23 @@ export default function RunningScreen() {
   // 일시정지/재개
   const togglePause = () => setIsPaused((p) => !p);
 
-  // STOP: 평균 만들고 분석 화면으로 이동
+  // STOP: 평균 만들고 세션 구성하여 분석 화면으로 이동
   const onStop = () => {
     const avgLeft = toAverage(sumL.current, cntL.current);
     const avgRight = toAverage(sumR.current, cntR.current);
 
-    // 필요하면 여기서 전역스토어에 저장하는 로직을 넣어도 됨.
-    // 예: useAppStore.getState().saveRun({ avgLeft, avgRight, isTaping })
+    const now = Date.now();
+    const startedMs = runStartRef.current ?? now;
+    const durationSec = Math.max(1, Math.round((now - startedMs) / 1000));
+    const session: RunSession = {
+      id: `run-${now}`,
+      startedAt: new Date(startedMs).toISOString(),
+      durationSec,
+      left: avgLeft,
+      right: avgRight,
+    };
 
-    // 분석 화면으로 네비게이션 (파라미터 전달)
-    nav.navigate('Analysis', {
-      avgLeft,
-      avgRight,
-      isTaping,
-      frames: {
-        left: Object.values(cntL.current).reduce((a, b) => a + b, 0),
-        right: Object.values(cntR.current).reduce((a, b) => a + b, 0),
-      },
-    });
+    nav.navigate('Analysis', { session });
 
     // 다음 러닝을 위해 리셋하고 싶다면 주석 해제
     // sumL.current = {}; sumR.current = {}; cntL.current = {}; cntR.current = {};
