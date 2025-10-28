@@ -3,6 +3,7 @@ import React, { createContext, useContext, useMemo, useRef, useState } from 'rea
 import { BleManager, Device } from 'react-native-ble-plx';
 import { Buffer } from 'buffer';
 import { CHANNEL_TO_SENSOR } from '../../config/insoles.ts'; // 기존 매핑 사용
+import { ensureBlePermissions } from './permissions';
 
 type Side = 'L' | 'R';
 type Mode = 'SLOW' | 'FAST' | 'CONNECTED';
@@ -191,6 +192,8 @@ export const BleProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const connectInsole = async (side: Side) => {
+    const ok = await ensureBlePermissions();
+    if (!ok) throw new Error('Bluetooth permissions denied');
     const namePrefix = `SmartInsole_${side}`;
     const manager = managerRef.current;
 
