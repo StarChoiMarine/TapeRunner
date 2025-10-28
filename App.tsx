@@ -13,6 +13,7 @@ import AnalysisScreen from './src/screens/AnalysisScreen';
 import VideoPlayerScreen from './src/screens/VideoPlayerScreen';
 import ActivityScreen from './src/screens/ActivityScreen';
 import AnalysisDetailScreen from './src/screens/AnalysisDetailScreen';
+import VideoScreen from './src/screens/VideoScreen';
 
 export type RootStackParamList = {
   Login: undefined;
@@ -45,6 +46,7 @@ export default function App() {
           <Stack.Screen name="Activity" component={ActivityScreen} />
           <Stack.Screen name="AnalysisDetail" component={AnalysisDetailScreen} />
           <Stack.Screen name="VideoPlayer" component={VideoPlayerScreen} />
+          <Stack.Screen name="Video" component={VideoScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

@@ -1,16 +1,44 @@
-import React, { useState } from 'react';
-import { View, Text, Pressable, ScrollView, TouchableOpacity, Image } from 'react-native';
+// src/screens/HomeScreen.tsx
+import React, { useState, useEffect } from 'react';
+import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import SideMenu from '../components/SideMenu';
 import DeviceStatusCard from '../components/DeviceStatusCard';
-import { injuryVideos } from '../data/injuryVideos';
+import TapeCarousel from '../components/TapeCarousel';
 
 export default function HomeScreen() {
   const nav = useNavigation<any>();
   const route = useRoute<any>();
   const [open, setOpen] = useState(false);
+  const [predictedInjuries, setPredictedInjuries] = useState<string[]>([]);
 
   const userName = route.params?.userName ?? '사용자';
+
+  useEffect(() => {
+      const initTestData = async () => {
+          // ✅ 테스트용 더미 부상 데이터, 실제 데이터 삽입 시 삭제
+          const dummyPredictions = ['PFPS', 'Achilles Tendinopathy', 'Inversion Sprain'];
+          await AsyncStorage.setItem('predictedInjuries', JSON.stringify(dummyPredictions));
+          console.log('✅ 테스트용 부상 데이터 저장 완료:', dummyPredictions);
+        };
+
+    const loadPredictedInjuries = async () => {
+      try {
+        const stored = await AsyncStorage.getItem('predictedInjuries');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed)) setPredictedInjuries(parsed);
+        }
+      } catch (e) {
+        console.error('부상 데이터 불러오기 오류:', e);
+      }
+    };
+    loadPredictedInjuries();
+
+    // 실제 데이터 삽입 시 삭제
+    initTestData().then(loadPredictedInjuries);
+  }, []);
 
   return (
     <View style={{ flex: 1, backgroundColor: '#E8F2DF' }}>
@@ -30,68 +58,15 @@ export default function HomeScreen() {
         <Text style={{ fontSize: 22, fontWeight: '800' }}>TAPE</Text>
       </View>
 
-      {/* 콘텐츠 */}
       <ScrollView contentContainerStyle={{ padding: 16, gap: 16 }}>
-        {/* 디바이스 상태 카드 */}
         <DeviceStatusCard />
-
-        {/* 테이핑 영상 리스트 */}
-        <View style={{ gap: 20 }}>
-          <Text style={{ fontSize: 20, fontWeight: '700', color: '#1B5E20' }}>
-            부상별 테이핑 영상
-          </Text>
-
-          {injuryVideos.map((injury) => (
-            <View
-              key={injury.id}
-              style={{
-                backgroundColor: '#fff',
-                borderRadius: 12,
-                padding: 16,
-                shadowColor: '#000',
-                shadowOpacity: 0.1,
-                shadowRadius: 8,
-                elevation: 3,
-              }}
-            >
-              <Text style={{ fontSize: 18, fontWeight: '700', color: '#2E7D32' }}>
-                {injury.name}
-              </Text>
-
-              {injury.videos.map((v) => (
-                <TouchableOpacity
-                  key={v.id}
-                  onPress={() => nav.navigate('VideoPlayer', { url: v.url, title: v.title })}
-                  style={{
-                    marginTop: 12,
-                    paddingVertical: 10,
-                    paddingHorizontal: 12,
-                    borderWidth: 1,
-                    borderColor: '#C8E6C9',
-                    borderRadius: 8,
-                    backgroundColor: '#F1F8E9',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 10,
-                  }}
-                >
-                  <Image
-                    source={{
-                      uri: 'https://cdn-icons-png.flaticon.com/512/727/727245.png',
-                    }}
-                    style={{ width: 24, height: 24 }}
-                  />
-                  <Text style={{ color: '#1B5E20', fontWeight: '600', flexShrink: 1 }}>
-                    {v.title}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          ))}
-        </View>
+            <Text style={{ fontSize: 20, fontWeight: '700', color: '#1B5E20' }}>
+                {userName}님을 위한 부상별 테이핑 영상
+            </Text>
+        {/* ✅ 여러 부상에 대한 추천 영상 표시 */}
+        <TapeCarousel predictedInjuries={predictedInjuries} />
       </ScrollView>
 
-      {/* RUN 버튼 */}
       <Pressable
         onPress={() => nav.navigate('Running')}
         style={{
@@ -120,7 +95,6 @@ export default function HomeScreen() {
         </View>
       </Pressable>
 
-      {/* 사이드 메뉴 */}
       <SideMenu open={open} onClose={() => setOpen(false)} userName={userName} />
     </View>
   );
