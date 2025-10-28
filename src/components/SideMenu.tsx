@@ -7,7 +7,9 @@ import {
   Pressable,
   Text,
   View,
+  Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
 type Props = { open: boolean; onClose: () => void; userName?: string };
@@ -20,7 +22,7 @@ export default function SideMenu({ open, onClose, userName = '사용자' }: Prop
 
   // translateX 값 (-WIDTH ~ 0)
   const tx = useRef(new Animated.Value(-WIDTH)).current;
-  const startX = useRef(0); // 제스처 시작 시점의 tx 값
+  const startX = useRef(0);
 
   // 열림/닫힘 애니메이션
   useEffect(() => {
@@ -31,28 +33,20 @@ export default function SideMenu({ open, onClose, userName = '사용자' }: Prop
     }).start();
   }, [open, tx]);
 
-  // 드래그 제스처 (왼쪽으로 밀면 닫힘)
+  // 드래그 제스처
   const panResponder = useMemo(
     () =>
       PanResponder.create({
-        onMoveShouldSetPanResponder: (_, g) => {
-          // 가로 이동이 5px 이상이면 제스처 시작
-          return Math.abs(g.dx) > 5;
-        },
+        onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 5,
         onPanResponderGrant: () => {
-          // 현재 위치를 시작점으로 저장
-          tx.stopAnimation((v: number) => {
-            startX.current = v;
-          });
+          tx.stopAnimation((v: number) => (startX.current = v));
         },
         onPanResponderMove: (_, g) => {
-          // 오른쪽(열기) 드래그는 0 이상으로 못 가게, 왼쪽(닫기)은 -WIDTH까지
           const next = CLAMP(startX.current + g.dx);
           tx.setValue(next);
         },
         onPanResponderRelease: (_, g) => {
-          // 스와이프 속도 또는 위치 임계값으로 닫기/열기 결정
-          const shouldClose = g.vx < -0.5 || (startX.current + g.dx) < -WIDTH * 0.4;
+          const shouldClose = g.vx < -0.5 || startX.current + g.dx < -WIDTH * 0.4;
           Animated.spring(tx, {
             toValue: shouldClose ? -WIDTH : 0,
             useNativeDriver: true,
@@ -62,7 +56,6 @@ export default function SideMenu({ open, onClose, userName = '사용자' }: Prop
           });
         },
         onPanResponderTerminate: () => {
-          // 다른 제스처에 뺏기면 원위치
           Animated.spring(tx, {
             toValue: 0,
             useNativeDriver: true,
@@ -73,10 +66,30 @@ export default function SideMenu({ open, onClose, userName = '사용자' }: Prop
     [onClose, tx]
   );
 
-  const Item = ({ label, to }: { label: string; to?: string }) => (
+  // ✅ 로그아웃 처리 함수
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('loggedInUser');
+      Alert.alert('로그아웃 완료', '정상적으로 로그아웃되었습니다.');
+      onClose();
+      nav.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    } catch (err) {
+      console.error('로그아웃 오류:', err);
+      Alert.alert('오류', '로그아웃 중 문제가 발생했습니다.');
+    }
+  };
+
+  const Item = ({ label, to, onPress }: { label: string; to?: string; onPress?: () => void }) => (
     <Pressable
       onPress={() => {
-        to && nav.navigate(to as never);
+        if (onPress) {
+          onPress();
+        } else if (to) {
+          nav.navigate(to as never);
+        }
         onClose();
       }}
       style={{ paddingVertical: 16, borderBottomWidth: 1, borderColor: '#eee' }}
@@ -87,13 +100,16 @@ export default function SideMenu({ open, onClose, userName = '사용자' }: Prop
 
   return (
     <>
-      {/* 반투명 오버레이 - 탭하면 닫힘 */}
+      {/* 반투명 오버레이 */}
       {open && (
         <Pressable
           onPress={onClose}
           style={{
             position: 'absolute',
-            top: 0, bottom: 0, left: 0, right: 0,
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
             backgroundColor: 'rgba(0,0,0,0.2)',
           }}
         />
@@ -104,7 +120,10 @@ export default function SideMenu({ open, onClose, userName = '사용자' }: Prop
         {...panResponder.panHandlers}
         style={{
           position: 'absolute',
-          top: 0, bottom: 0, left: 0, width: WIDTH,
+          top: 0,
+          bottom: 0,
+          left: 0,
+          width: WIDTH,
           backgroundColor: 'white',
           padding: 20,
           transform: [{ translateX: tx }],
@@ -115,21 +134,38 @@ export default function SideMenu({ open, onClose, userName = '사용자' }: Prop
         }}
       >
         <View style={{ paddingVertical: 24, borderBottomWidth: 1, borderColor: '#eee' }}>
-          <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: '#eee', marginBottom: 8 }} />
+          <View
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: 28,
+              backgroundColor: '#eee',
+              marginBottom: 8,
+            }}
+          />
           <Text style={{ fontSize: 18, fontWeight: '700' }}>{userName}</Text>
         </View>
 
         <Item label="러닝" to="Home" />
-        <Item label="테이핑" to="Analysis" />
-        <Item label="내 자세 분석" to="Analysis" />
+        <Item label="내 활동" to="Activity" />
+        <Item label="테이핑" to="Video" />
         <Item label="기기 연결" to="DeviceConnect" />
-        <Item label="로그아웃" to="Login" />
+
+        {/* ✅ 로그아웃 버튼 */}
+        <Item label="로그아웃" onPress={handleLogout} />
 
         <Pressable
-          onPress={() => nav.navigate('Analysis')}
+          onPress={() => nav.navigate('Activity')}
           style={{ position: 'absolute', right: 16, bottom: 16 }}
         >
-          <Text style={{ backgroundColor: '#efefef', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 }}>
+          <Text
+            style={{
+              backgroundColor: '#efefef',
+              paddingHorizontal: 12,
+              paddingVertical: 6,
+              borderRadius: 12,
+            }}
+          >
             가이드
           </Text>
         </Pressable>

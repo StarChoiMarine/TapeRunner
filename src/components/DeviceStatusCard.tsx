@@ -2,6 +2,7 @@
 import React from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useAppStore } from '../store/appStore';
 import Svg, { Circle } from 'react-native-svg';
 
 // ✅ 전역 BLE 훅(평면 키로 값 제공: battL/battR, isLeftConnected/isRightConnected 등)

@@ -1,32 +1,101 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, KeyboardAvoidingView, Platform
 } from 'react-native';
+import SQLite from 'react-native-sqlite-storage';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../App';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Signup'>;
 
-const isEmail = (v: string) =>
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+const isNickname = (v: string) => /^[a-zA-Z0-9가-힣]{2,10}$/.test(v);
+
+SQLite.enablePromise(true);
 
 export default function SignupScreen({ navigation }: Props) {
   const [email, setEmail] = useState('');
+  const [nickname, setNickname] = useState('');
   const [pw, setPw] = useState('');
   const [pw2, setPw2] = useState('');
   const [loading, setLoading] = useState(false);
+  const [db, setDb] = useState<SQLite.SQLiteDatabase | null>(null);
+
+  // DB 초기화
+  useEffect(() => {
+    const initDB = async () => {
+      try {
+        const database = await SQLite.openDatabase({ name: 'taperunner.db', location: 'default' });
+        await database.executeSql(`
+          CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE NOT NULL,
+            nickname TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            created_at TEXT NOT NULL
+          );
+        `);
+        setDb(database);
+      } catch (e) {
+        console.error('DB 초기화 오류:', e);
+      }
+    };
+    initDB();
+  }, []);
 
   const onSignup = async () => {
-    if (!isEmail(email)) return Alert.alert('확인', '올바른 이메일을 입력해주세요.');
-    if (pw.length < 6) return Alert.alert('확인', '비밀번호는 6자 이상으로 입력해주세요.');
-    if (pw !== pw2)  return Alert.alert('확인', '비밀번호가 일치하지 않습니다.');
+    if (!email || !nickname || !pw || !pw2) {
+      Alert.alert('오류', '모든 필드를 입력해주세요.');
+      return;
+    }
+    if (!isEmail(email)) {
+      Alert.alert('오류', '이메일 형식이 올바르지 않습니다.');
+      return;
+    }
+    if (!isNickname(nickname)) {
+      Alert.alert('오류', '닉네임은 2~10자의 한글, 영어, 숫자만 사용할 수 있습니다.');
+      return;
+    }
+    if (pw !== pw2) {
+      Alert.alert('오류', '비밀번호가 일치하지 않습니다.');
+      return;
+    }
 
-    // 🔧 백엔드 연동 전까지는 데모로 성공 처리
+    if (!db) {
+      Alert.alert('오류', '데이터베이스 연결 실패');
+      return;
+    }
+
     try {
       setLoading(true);
-      await new Promise(r => setTimeout(r, 700));
+
+      // 이메일 중복 검사
+      const [emailCheck] = await db.executeSql(`SELECT * FROM users WHERE email = ?`, [email]);
+      if (emailCheck.rows.length > 0) {
+        Alert.alert('오류', '이미 사용 중인 이메일입니다.');
+        setLoading(false);
+        return;
+      }
+
+      // 닉네임 중복 검사
+      const [nicknameCheck] = await db.executeSql(`SELECT * FROM users WHERE nickname = ?`, [nickname]);
+      if (nicknameCheck.rows.length > 0) {
+        Alert.alert('오류', '이미 사용 중인 닉네임입니다.');
+        setLoading(false);
+        return;
+      }
+
+      // 신규 사용자 저장
+      await db.executeSql(
+        `INSERT INTO users (email, nickname, password, created_at) VALUES (?, ?, ?, ?)`,
+        [email, nickname, pw, new Date().toISOString()]
+      );
+
       Alert.alert('가입 완료', '이제 로그인해주세요.');
       navigation.replace('Login');
+    } catch (error) {
+      console.error('회원가입 오류:', error);
+      Alert.alert('오류', '회원가입 중 문제가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -46,6 +115,17 @@ export default function SignupScreen({ navigation }: Props) {
             onChangeText={setEmail}
             autoCapitalize="none"
             keyboardType="email-address"
+            style={{ borderWidth:1, borderColor:'#ddd', borderRadius:10, padding:12 }}
+          />
+        </View>
+
+        <View style={{ gap:10 }}>
+          <Text style={{ fontWeight:'600' }}>닉네임</Text>
+          <TextInput
+            placeholder="2~10자, 특수문자 금지"
+            value={nickname}
+            onChangeText={setNickname}
+            autoCapitalize="none"
             style={{ borderWidth:1, borderColor:'#ddd', borderRadius:10, padding:12 }}
           />
         </View>
@@ -80,7 +160,7 @@ export default function SignupScreen({ navigation }: Props) {
         </TouchableOpacity>
 
         <View style={{ flexDirection:'row', justifyContent:'center', gap:8 }}>
-          <Text>이미 계정이 있으신가요?</Text>
+          <Text>이미 계정이 있으신가요??</Text>
           <TouchableOpacity onPress={() => navigation.replace('Login')}>
             <Text style={{ color:'#007aff', fontWeight:'600' }}>로그인</Text>
           </TouchableOpacity>
