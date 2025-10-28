@@ -18,7 +18,7 @@ export const injuryVideos: InjuryItem[] = [
       {
         id: 1,
         title: "족저근막염 예방 테이핑 (키네시오)",
-        url: "https://your-bucket-name.s3.ap-northeast-2.amazonaws.com/video1.mp4",
+        url: "https://tape-runner-videos.s3.ap-northeast-2.amazonaws.com/%EC%A1%B1%EC%A0%80%EA%B7%BC%EB%A7%89%EC%97%BC+%EC%98%88%EB%B0%A9+%ED%85%8C%EC%9D%B4%ED%95%91.mp4",
       },
     ],
   },
@@ -34,7 +34,7 @@ export const injuryVideos: InjuryItem[] = [
       {
         id: 5,
         title: "아킬레스건 및 종아리 통증 예방 테이핑 (키네시오)",
-        url: "https://your-bucket-name.s3.ap-northeast-2.amazonaws.com/video5.mp4",
+        url: "https://tape-runner-videos.s3.ap-northeast-2.amazonaws.com/%EC%95%84%ED%82%AC%EB%A0%88%EC%8A%A4%EA%B1%B4%2C+%EC%A2%85%EC%95%84%EB%A6%AC+%ED%86%B5%EC%A6%9D+%EC%98%88%EB%B0%A9+%ED%85%8C%EC%9D%B4%ED%95%91.mp4",
       },
     ],
   },
