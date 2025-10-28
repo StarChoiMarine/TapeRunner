@@ -5,7 +5,8 @@ import { RIGHT_LAYOUT_20 } from '../config/insoles';
 
 type Props = {
   /** 센서ID -> 정규화(0~1) 값 */
-  sensorValues: Record<number, number>;
+  sensorValues: Record<string | number, number>;
+
   width?: number; height?: number;
   /** 왼발이면 true (좌우 반전) */
   mirror?: boolean;
@@ -66,7 +67,7 @@ const FootDots: React.FC<Props> = ({
 
       <G transform={mirror ? `translate(${width},0) scale(-1,1)` : undefined}>
         {RIGHT_LAYOUT_20.map(({ id, x, y}) => {
-          const v = clamp01(sensorValues[id]);
+          const v = clamp01(sensorValues[String(id)]);
           const cx = x * width;
           const cy = y * height;
 
