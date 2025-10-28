@@ -50,13 +50,13 @@ export function buildUserPrompt(session: RunSession) {
   return [
     '다음은 족저 압력 센서의 정규화된 요약입니다.',
     `세션 길이(초): ${session.durationSec}`,
-    `왼발 상위 센서: ${leftTop}`,
-    `오른발 상위 센서: ${rightTop}`,
+    `왼발 센서: ${leftTop}`,
+    `오른발 센서: ${rightTop}`,
     '부상 연관 센서 그룹(참고): ' +
       Object.entries(INJURY_MAP)
         .map(([k, v]) => `${k}:${v.sensors.join('/')}`)
         .join(', '),
-    '요청사항: 1) 좌우 하중 편향과 전/후족부 전이 설명, 2) 2~3문장 핵심 개선 팁, 3) 테이핑 범주(예: 발목 내번, 무릎 전면 등) 제안.',
+    '요청사항: 1) 좌우 하중 편향과 전/후족부 전이 설명, 2) 핵심 개선 팁, 3) 테이핑 범주(예: 발목 내번, 무릎 전면 등) 제안. *요청사항을 출력에 포함하지 않기, 특수기호 출력하지 않기, 마크다운 문법 사용하지 않기',
   ].join('\n');
 }
 
