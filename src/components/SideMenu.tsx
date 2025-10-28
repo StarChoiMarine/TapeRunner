@@ -147,6 +147,7 @@ export default function SideMenu({ open, onClose, userName = '사용자' }: Prop
         </View>
 
         <Item label="러닝" to="Home" />
+        <Item label="내 활동" to="Activity" />
         <Item label="테이핑" to="Video" />
         <Item label="내 자세 분석" to="Analysis" />
         <Item label="기기 연결" to="DeviceConnect" />
@@ -155,7 +156,7 @@ export default function SideMenu({ open, onClose, userName = '사용자' }: Prop
         <Item label="로그아웃" onPress={handleLogout} />
 
         <Pressable
-          onPress={() => nav.navigate('Analysis')}
+          onPress={() => nav.navigate('Activity')}
           style={{ position: 'absolute', right: 16, bottom: 16 }}
         >
           <Text
