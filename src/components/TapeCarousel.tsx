@@ -56,6 +56,7 @@ export default function TapeCarousel({ predictedInjuries }: Props) {
                   nav.navigate('VideoPlayer', {
                     url: item.url,
                     title: item.title,
+                    thumbnail: item.thumbnail,
                   })
                 }
                 style={{
@@ -79,11 +80,9 @@ export default function TapeCarousel({ predictedInjuries }: Props) {
                   }}
                 >
                   <Image
-                    source={{
-                      uri: `https://your-bucket-name.s3.ap-northeast-2.amazonaws.com/thumb${item.id}.png`,
-                    }}
+                    source={item.thumbnail}
                     style={{ width: '100%', height: '100%' }}
-                    resizeMode="cover"
+                    resizeMode="contain"
                   />
                 </View>
                 <Text style={{ fontWeight: '600' }}>{item.title}</Text>
