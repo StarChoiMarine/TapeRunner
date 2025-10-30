@@ -78,13 +78,15 @@ export default function TapeCarousel({ predictedInjuries }: Props) {
                     marginBottom: 8,
                   }}
                 >
-                  <Image
-                    source={{
-                      uri: `https://your-bucket-name.s3.ap-northeast-2.amazonaws.com/thumb${item.id}.png`,
-                    }}
-                    style={{ width: '100%', height: '100%' }}
-                    resizeMode="cover"
-                  />
+                  { // id와 썸네일 파일번호가 같을 때만 표시
+                    (item as any).thumbNo === item.id ? (
+                      <Image
+                        source={(item as any).thumbnail}
+                        style={{ width: '100%', height: '100%' }}
+                        resizeMode="contain"
+                      />
+                    ) : null
+                  }
                 </View>
                 <Text style={{ fontWeight: '600' }}>{item.title}</Text>
                 <Text

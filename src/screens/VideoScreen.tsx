@@ -66,12 +66,9 @@ export default function VideoScreen() {
                   gap: 10,
                 }}
               >
-                <Image
-                  source={{
-                    uri: 'https://cdn-icons-png.flaticon.com/512/727/727245.png',
-                  }}
-                  style={{ width: 24, height: 24 }}
-                />
+                {v.thumbNo === v.id ? (
+                  <Image source={v.thumbnail as any} style={{ width: 56, height: 56, borderRadius: 8 }} />
+                ) : null}
                 <Text style={{ color: '#1B5E20', fontWeight: '600', flexShrink: 1 }}>
                   {v.title}
                 </Text>
