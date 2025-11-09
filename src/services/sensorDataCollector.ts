@@ -116,9 +116,13 @@ class SensorDataCollector {
       throw new Error('No data to save');
     }
 
-    // 기본 저장 경로 설정 (Documents 디렉토리)
+    // 기본 저장 경로 설정 (Downloads 폴더)
     const fileName = `sensor_data_${session.sessionId}_${new Date(session.startTime).toISOString().split('T')[0]}.csv`;
-    const filePath = customPath || `${RNFS.DocumentDirectoryPath}/${fileName}`;
+
+    let filePath: string;
+    filePath = customPath || `${RNFS.DownloadDirectoryPath}/${fileName}`;
+
+    console.log('📄 File will be saved to:', filePath);
 
     try {
       await RNFS.writeFile(filePath, csvContent, 'utf8');
