@@ -26,9 +26,7 @@ async function mockRequestAnalysis(session: RunSession): Promise<AIAnalysisResul
   };
 }
 
-/**
- * 생성형 AI 분석 요청(모킹). 추후 실제 API 엔드포인트가 정해지면 아래 fetch 분기를 활성화하세요.
- */
+
 export async function requestAnalysis(session: RunSession, opts?: { signal?: AbortSignal }): Promise<AIAnalysisResult> {
   const API_URL = AI_API_URL || undefined; // 예: https://api.example.com/ai/analyze
 

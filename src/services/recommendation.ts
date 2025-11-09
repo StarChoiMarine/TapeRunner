@@ -100,7 +100,7 @@ export function deriveRecommendation(session: RunSession): InjuryRecommendation 
   }
 
   // 기본: PFPS를 기본 권고로 제시
-  reasons.push('특정 편중 패턴이 뚜렷하지 않습니다.');
+  reasons.push('특정 편중이 뚜렷하지 않습니다.');
   return {
     key: 'PFPS',
     label: 'PFPS (슬개대퇴통증증후군)',

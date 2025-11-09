@@ -1,9 +1,10 @@
 // src/screens/RunningScreen.tsx
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Switch, Pressable } from 'react-native';
+import { View, Text, Switch, Pressable, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import FootDots from '../components/FootDots';
 import { useBle } from '../store/ble/BleProvider';
+import { sensorDataCollector } from '../services/sensorDataCollector';
 import type { RunSession } from '../types/analysis';
 
 type SensorMap = Record<number, number>;
@@ -11,6 +12,13 @@ type SensorMap = Record<number, number>;
 export default function RunningScreen() {
   const nav = useNavigation<any>();
   const { leftVals, rightVals, isLeftConnected, isRightConnected } = useBle();
+
+  // 데이터 수집 상태
+  const [collectionStats, setCollectionStats] = useState<{
+    isCollecting: boolean;
+    dataPoints: number;
+    durationSec: number;
+  }>({ isCollecting: false, dataPoints: 0, durationSec: 0 });
 
   // ── UI 스위치 상태
   const [showRealtime, setShowRealtime] = useState(true); // 실시간 압력 표시
@@ -34,7 +42,18 @@ export default function RunningScreen() {
       sumL.current[sid] = (sumL.current[sid] ?? 0) + (Number(v) || 0);
       cntL.current[sid] = (cntL.current[sid] ?? 0) + 1;
     }
-    if (!runStartRef.current) runStartRef.current = Date.now();
+
+    // 러닝 시작 시 데이터 수집 시작
+    if (!runStartRef.current) {
+      runStartRef.current = Date.now();
+      sensorDataCollector.startSession(`run_${Date.now()}`);
+    }
+
+    // 데이터 수집 중이면 현재 데이터 포인트 추가
+    const currentSession = sensorDataCollector.getCurrentSession();
+    if (currentSession?.isCollecting) {
+      sensorDataCollector.addDataPoint(leftVals, rightVals);
+    }
   }, [leftVals, isPaused]);
 
   useEffect(() => {
@@ -46,8 +65,38 @@ export default function RunningScreen() {
       sumR.current[sid] = (sumR.current[sid] ?? 0) + (Number(v) || 0);
       cntR.current[sid] = (cntR.current[sid] ?? 0) + 1;
     }
-    if (!runStartRef.current) runStartRef.current = Date.now();
+
+    // 러닝 시작 시 데이터 수집 시작 (왼발 데이터가 없을 경우를 대비)
+    if (!runStartRef.current) {
+      runStartRef.current = Date.now();
+      sensorDataCollector.startSession(`run_${Date.now()}`);
+    }
+
+    // 데이터 수집 중이면 현재 데이터 포인트 추가
+    const currentSession = sensorDataCollector.getCurrentSession();
+    if (currentSession?.isCollecting) {
+      sensorDataCollector.addDataPoint(leftVals, rightVals);
+    }
   }, [rightVals, isPaused]);
+
+  // 데이터 수집 상태 업데이트 (1초마다)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const session = sensorDataCollector.getCurrentSession();
+      if (session) {
+        const stats = sensorDataCollector.getSessionStats(session);
+        setCollectionStats({
+          isCollecting: session.isCollecting,
+          dataPoints: stats?.totalPoints || 0,
+          durationSec: Math.round((Date.now() - session.startTime) / 1000),
+        });
+      } else {
+        setCollectionStats({ isCollecting: false, dataPoints: 0, durationSec: 0 });
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // 평균 계산 유틸
   const toAverage = (sum: Record<number, number>, cnt: Record<number, number>) => {
@@ -64,29 +113,97 @@ export default function RunningScreen() {
   };
 
   // 일시정지/재개
-  const togglePause = () => setIsPaused((p) => !p);
+  const togglePause = () => {
+    const newPaused = !isPaused;
+    setIsPaused(newPaused);
 
-  // STOP: 평균 만들고 세션 구성하여 분석 화면으로 이동
-  const onStop = () => {
-    const avgLeft = toAverage(sumL.current, cntL.current);
-    const avgRight = toAverage(sumR.current, cntR.current);
+    // 데이터 수집도 함께 제어
+    const currentSession = sensorDataCollector.getCurrentSession();
+    if (currentSession) {
+      // 실제로는 세션의 isCollecting을 토글하지만,
+      // 현재 구현에서는 일시정지 시 데이터 수집을 건너뛰도록 useEffect에서 처리
+      console.log(`${newPaused ? '일시정지' : '재개'}: 데이터 수집 ${newPaused ? '중지' : '시작'}`);
+    }
+  };
 
-    const now = Date.now();
-    const startedMs = runStartRef.current ?? now;
-    const durationSec = Math.max(1, Math.round((now - startedMs) / 1000));
-    const session: RunSession = {
-      id: `run-${now}`,
-      startedAt: new Date(startedMs).toISOString(),
-      durationSec,
-      left: avgLeft,
-      right: avgRight,
-    };
+  // STOP: 평균 만들고 세션 구성하여 분석 화면으로 이동 + 센서 데이터 저장
+  const onStop = async () => {
+    try {
+      // 1. 데이터 수집 중지
+      const dataSession = sensorDataCollector.stopSession();
 
-    nav.navigate('Analysis', { session });
+      // 2. 평균 계산 및 기존 세션 생성
+      const avgLeft = toAverage(sumL.current, cntL.current);
+      const avgRight = toAverage(sumR.current, cntR.current);
 
-    // 다음 러닝을 위해 리셋하고 싶다면 주석 해제
-    // sumL.current = {}; sumR.current = {}; cntL.current = {}; cntR.current = {};
-    // setIsPaused(false);
+      const now = Date.now();
+      const startedMs = runStartRef.current ?? now;
+      const durationSec = Math.max(1, Math.round((now - startedMs) / 1000));
+      const session: RunSession = {
+        id: `run-${now}`,
+        startedAt: new Date(startedMs).toISOString(),
+        durationSec,
+        left: avgLeft,
+        right: avgRight,
+      };
+
+      // 3. 센서 데이터를 CSV로 저장
+      if (dataSession && dataSession.dataPoints.length > 0) {
+        const filePath = await sensorDataCollector.saveToCSV(dataSession);
+        const stats = sensorDataCollector.getSessionStats(dataSession);
+
+        console.log(`센서 데이터가 저장되었습니다: ${filePath}`);
+        console.log(`수집된 데이터 포인트: ${stats?.totalPoints || 0}개`);
+        console.log(`평균 데이터 속도: ${stats?.avgDataRate.toFixed(2) || 0} Hz`);
+
+        // 사용자에게 저장 완료 알림
+        Alert.alert(
+          '데이터 저장 완료',
+          `센서 데이터가 저장되었습니다.\n파일: ${filePath.split('/').pop()}\n데이터 포인트: ${stats?.totalPoints || 0}개`,
+          [{ text: '확인' }]
+        );
+      } else {
+        Alert.alert('알림', '수집된 센서 데이터가 없습니다.', [{ text: '확인' }]);
+      }
+
+      // 4. 분석 화면으로 이동
+      nav.navigate('Analysis', { session });
+
+      // 5. 다음 러닝을 위해 리셋
+      sumL.current = {}; sumR.current = {}; cntL.current = {}; cntR.current = {};
+      runStartRef.current = null;
+      sensorDataCollector.resetSession();
+      setIsPaused(false);
+
+    } catch (error) {
+      console.error('데이터 저장 중 오류 발생:', error);
+      Alert.alert(
+        '저장 오류',
+        '센서 데이터 저장 중 오류가 발생했습니다. 분석은 계속 진행됩니다.',
+        [{ text: '확인' }]
+      );
+
+      // 오류가 발생해도 분석 화면으로는 이동
+      const avgLeft = toAverage(sumL.current, cntL.current);
+      const avgRight = toAverage(sumR.current, cntR.current);
+      const now = Date.now();
+      const startedMs = runStartRef.current ?? now;
+      const durationSec = Math.max(1, Math.round((now - startedMs) / 1000));
+      const session: RunSession = {
+        id: `run-${now}`,
+        startedAt: new Date(startedMs).toISOString(),
+        durationSec,
+        left: avgLeft,
+        right: avgRight,
+      };
+      nav.navigate('Analysis', { session });
+
+      // 리셋
+      sumL.current = {}; sumR.current = {}; cntL.current = {}; cntR.current = {};
+      runStartRef.current = null;
+      sensorDataCollector.resetSession();
+      setIsPaused(false);
+    }
   };
 
   // 실시간 표시 토글이 꺼져 있으면 빈 맵을 넘겨서 파편만 흐리게 보이게
@@ -102,6 +219,22 @@ export default function RunningScreen() {
           {isLeftConnected || isRightConnected ? '연결됨' : '연결 대기'}
         </Text>
       </View>
+
+      {/* 데이터 수집 상태 표시 */}
+      {collectionStats.isCollecting && (
+        <View style={{
+          backgroundColor: '#E0F2FE',
+          paddingHorizontal: 12,
+          paddingVertical: 6,
+          borderRadius: 8,
+          marginTop: 8,
+          alignSelf: 'flex-start',
+        }}>
+          <Text style={{ fontSize: 14, color: '#0277BD', fontWeight: '600' }}>
+            📊 데이터 수집 중: {collectionStats.dataPoints} 포인트 ({collectionStats.durationSec}초)
+          </Text>
+        </View>
+      )}
 
       {/* 발 모양(왼/오) */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 24 }}>
