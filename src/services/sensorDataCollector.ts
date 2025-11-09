@@ -17,6 +17,7 @@ export interface DataCollectionSession {
   startTime: number;
   dataPoints: SensorDataPoint[];
   isCollecting: boolean;
+  lastDataTime: number; // 마지막 데이터 추가 시간
 }
 
 class SensorDataCollector {
@@ -32,6 +33,7 @@ class SensorDataCollector {
       startTime: Date.now(),
       dataPoints: [],
       isCollecting: true,
+      lastDataTime: 0,
     };
     console.log(`[SensorDataCollector] Started session: ${id}`);
   }

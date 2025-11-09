@@ -32,52 +32,44 @@ export default function RunningScreen() {
   const cntR = useRef<Record<number, number>>({});
   const runStartRef = useRef<number | null>(null);
 
-  // 발별로 새 프레임 들어올 때마다 누적 (일시정지 중이면 무시)
+  // 센서 데이터 변경 시 처리 (일시정지 중이면 무시)
   useEffect(() => {
     if (isPaused) return;
-    if (!leftVals) return;
 
-    for (const [sidStr, v] of Object.entries(leftVals as SensorMap)) {
-      const sid = Number(sidStr);
-      sumL.current[sid] = (sumL.current[sid] ?? 0) + (Number(v) || 0);
-      cntL.current[sid] = (cntL.current[sid] ?? 0) + 1;
+    // 왼발 또는 오른발 데이터가 있어야 처리
+    if (!leftVals && !rightVals) return;
+
+    // 왼발 데이터 누적
+    if (leftVals) {
+      for (const [sidStr, v] of Object.entries(leftVals as SensorMap)) {
+        const sid = Number(sidStr);
+        sumL.current[sid] = (sumL.current[sid] ?? 0) + (Number(v) || 0);
+        cntL.current[sid] = (cntL.current[sid] ?? 0) + 1;
+      }
+    }
+
+    // 오른발 데이터 누적
+    if (rightVals) {
+      for (const [sidStr, v] of Object.entries(rightVals as SensorMap)) {
+        const sid = Number(sidStr);
+        sumR.current[sid] = (sumR.current[sid] ?? 0) + (Number(v) || 0);
+        cntR.current[sid] = (cntR.current[sid] ?? 0) + 1;
+      }
     }
 
     // 러닝 시작 시 데이터 수집 시작
     if (!runStartRef.current) {
       runStartRef.current = Date.now();
       sensorDataCollector.startSession(`run_${Date.now()}`);
+      console.log('🏃‍♂️ 러닝 및 데이터 수집 시작');
     }
 
-    // 데이터 수집 중이면 현재 데이터 포인트 추가
+    // 데이터 수집 중이면 현재 데이터 포인트 추가 (sensorDataCollector 내부에서 시간 필터링)
     const currentSession = sensorDataCollector.getCurrentSession();
     if (currentSession?.isCollecting) {
-      sensorDataCollector.addDataPoint(leftVals, rightVals);
+      sensorDataCollector.addDataPoint(leftVals || {}, rightVals || {});
     }
-  }, [leftVals, isPaused]);
-
-  useEffect(() => {
-    if (isPaused) return;
-    if (!rightVals) return;
-
-    for (const [sidStr, v] of Object.entries(rightVals as SensorMap)) {
-      const sid = Number(sidStr);
-      sumR.current[sid] = (sumR.current[sid] ?? 0) + (Number(v) || 0);
-      cntR.current[sid] = (cntR.current[sid] ?? 0) + 1;
-    }
-
-    // 러닝 시작 시 데이터 수집 시작 (왼발 데이터가 없을 경우를 대비)
-    if (!runStartRef.current) {
-      runStartRef.current = Date.now();
-      sensorDataCollector.startSession(`run_${Date.now()}`);
-    }
-
-    // 데이터 수집 중이면 현재 데이터 포인트 추가
-    const currentSession = sensorDataCollector.getCurrentSession();
-    if (currentSession?.isCollecting) {
-      sensorDataCollector.addDataPoint(leftVals, rightVals);
-    }
-  }, [rightVals, isPaused]);
+  }, [leftVals, rightVals, isPaused]);
 
   // 데이터 수집 상태 업데이트 (1초마다)
   useEffect(() => {
