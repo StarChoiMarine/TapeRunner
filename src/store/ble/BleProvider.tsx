@@ -1,5 +1,5 @@
 // store/ble/BleProvider.tsx
-import React, { createContext, useContext, useMemo, useRef, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { BleManager, Device } from 'react-native-ble-plx';
 import { Buffer } from 'buffer';
 import { CHANNEL_TO_SENSOR } from '../../config/insoles.ts'; // 기존 매핑 사용
@@ -165,6 +165,25 @@ export const BleProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const accL = useRef(''); // 왼발 누적 텍스트
   const accR = useRef(''); // 오른발 누적 텍스트
 
+  // 센서 업데이트 스로틀링(최대 20Hz)
+  const latestLeftRef = useRef<Record<number, number>>({});
+  const latestRightRef = useRef<Record<number, number>>({});
+  const updateTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const startUpdateLoop = () => {
+    if (updateTimerRef.current) return;
+    updateTimerRef.current = setInterval(() => {
+      // 최신값으로 상태 일괄 반영 (불필요한 고주파 렌더 방지)
+      setLeftVals((prev) => latestLeftRef.current);
+      setRightVals((prev) => latestRightRef.current);
+    }, 50); // ~20Hz
+  };
+  const stopUpdateLoop = () => {
+    if (updateTimerRef.current) {
+      clearInterval(updateTimerRef.current);
+      updateTimerRef.current = null;
+    }
+  };
+
   // 공통 라인 처리기: CSV/FSR/STAT 모두 처리
   const handleLine = (side: Side, line: string) => {
     if (!line) return;
@@ -186,8 +205,14 @@ export const BleProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const vals16 = parseFSRLineToVals16(line);
     if (vals16) {
       const sensorMap = applyNoiseFilter(toSensorMapFromChannels(vals16));
-      if (side === 'L') { setLeftVals(sensorMap); setRawL(line); }
-      else              { setRightVals(sensorMap); setRawR(line); }
+      if (side === 'L') {
+        latestLeftRef.current = sensorMap;
+        setRawL(line);
+      } else {
+        latestRightRef.current = sensorMap;
+        setRawR(line);
+      }
+      startUpdateLoop();
     }
   };
 
@@ -198,6 +223,12 @@ export const BleProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const manager = managerRef.current;
 
     await new Promise<void>((resolve, reject) => {
+      // 스캔 타임아웃 보호
+      const scanTimeout = setTimeout(() => {
+        try { manager.stopDeviceScan(); } catch {}
+        reject(new Error('BLE scan timeout'));
+      }, 10000);
+
       manager.startDeviceScan(null, null, async (error, dev) => {
         if (error) { reject(error); return; }
         if (!dev?.name?.startsWith(namePrefix)) return;
@@ -216,7 +247,13 @@ export const BleProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               // base64 → utf8 조각
               const chunk = Buffer.from(ch.value, 'base64').toString('utf8');
 
-              console.log(`[BLE][${side}] chunk:`, JSON.stringify(chunk));
+              // 고주파 로그는 성능/발열 저하 유발. 개발 모드에서만 출력
+              if (__DEV__) {
+                // 긴 로그 방지
+                const snippet = chunk.length > 120 ? `${chunk.slice(0, 120)}…` : chunk;
+                // eslint-disable-next-line no-console
+                console.log(`[BLE][${side}] chunk:`, JSON.stringify(snippet));
+              }
               
               const acc = side === 'L' ? accL : accR;
               acc.current += chunk;
@@ -235,6 +272,7 @@ export const BleProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           if (side === 'L') { subL.current = handle; setLeftDevice(d); setIsLeftConnected(true); }
           else              { subR.current = handle; setRightDevice(d); setIsRightConnected(true); }
 
+          clearTimeout(scanTimeout);
           resolve();
         } catch (e) { reject(e); }
       });
@@ -256,7 +294,21 @@ export const BleProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setRightVals({}); setRawR('');
       setBattR(null); setVbatR(null); setModeR(null); setVerR(null); setLastStatAtR(null);
     }
+    // 양쪽 모두 끊기면 업데이트 루프 중지
+    if (!leftDevice && !rightDevice) stopUpdateLoop();
   };
+
+  // 언마운트/종료 시 정리
+  useEffect(() => {
+    return () => {
+      try { managerRef.current?.stopDeviceScan(); } catch {}
+      try { subL.current?.remove?.(); } catch {}
+      try { subR.current?.remove?.(); } catch {}
+      stopUpdateLoop();
+      // 연결 해제는 OS가 정리하더라도, 매니저는 명시적으로 종료
+      try { managerRef.current?.destroy(); } catch {}
+    };
+  }, []);
 
   const value = useMemo(() => ({
     isLeftConnected, isRightConnected,
