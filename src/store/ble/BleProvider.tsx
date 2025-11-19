@@ -326,3 +326,5 @@ export const BleProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 };
+
+/* 과부하 에러 수정*/
