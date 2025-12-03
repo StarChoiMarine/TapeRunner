@@ -1,3 +1,11 @@
+.env
+*.env
+*.env.*
+node_modules
+android/.gradle
+ios/Pods
+dist
+build
 # OSX
 #
 .DS_Store
@@ -34,11 +42,13 @@ local.properties
 *.keystore
 !debug.keystore
 
+
 # node.js
 #
 node_modules/
 npm-debug.log
 yarn-error.log
+src/data/injuryVideos.ts
 
 # fastlane
 #
