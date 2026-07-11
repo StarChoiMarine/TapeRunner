@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { color, font, radius } from '../theme';
 
 type Props = { open: boolean; onClose: () => void; userName?: string };
 
@@ -82,7 +83,17 @@ export default function SideMenu({ open, onClose, userName = '사용자' }: Prop
     }
   };
 
-  const Item = ({ label, to, onPress }: { label: string; to?: string; onPress?: () => void }) => (
+  const Item = ({
+    label,
+    to,
+    onPress,
+    danger,
+  }: {
+    label: string;
+    to?: string;
+    onPress?: () => void;
+    danger?: boolean;
+  }) => (
     <Pressable
       onPress={() => {
         if (onPress) {
@@ -92,9 +103,26 @@ export default function SideMenu({ open, onClose, userName = '사용자' }: Prop
         }
         onClose();
       }}
-      style={{ paddingVertical: 16, borderBottomWidth: 1, borderColor: '#eee' }}
+      style={({ pressed }) => ({
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingVertical: 16,
+        paddingHorizontal: 14,
+        borderRadius: radius.md,
+        backgroundColor: pressed ? 'rgba(246,243,233,0.07)' : 'transparent',
+      })}
     >
-      <Text style={{ fontSize: 16 }}>{label}</Text>
+      <Text
+        style={{
+          fontFamily: font.medium,
+          fontSize: 16,
+          color: danger ? '#E8907D' : color.ivory,
+        }}
+      >
+        {label}
+      </Text>
+      <Text style={{ fontFamily: font.regular, fontSize: 16, color: color.ivoryFaint }}>›</Text>
     </Pressable>
   );
 
@@ -110,7 +138,7 @@ export default function SideMenu({ open, onClose, userName = '사용자' }: Prop
             bottom: 0,
             left: 0,
             right: 0,
-            backgroundColor: 'rgba(0,0,0,0.2)',
+            backgroundColor: 'rgba(12,39,30,0.45)',
           }}
         />
       )}
@@ -124,26 +152,44 @@ export default function SideMenu({ open, onClose, userName = '사용자' }: Prop
           bottom: 0,
           left: 0,
           width: WIDTH,
-          backgroundColor: 'white',
+          backgroundColor: color.surfaceDeep,
           padding: 20,
           transform: [{ translateX: tx }],
-          elevation: 8,
+          elevation: 12,
           shadowColor: '#000',
-          shadowOpacity: 0.15,
-          shadowRadius: 10,
+          shadowOpacity: 0.3,
+          shadowRadius: 16,
         }}
       >
-        <View style={{ paddingVertical: 24, borderBottomWidth: 1, borderColor: '#eee' }}>
+        {/* 프로필 */}
+        <View
+          style={{
+            paddingTop: 28,
+            paddingBottom: 24,
+            marginBottom: 12,
+            borderBottomWidth: 1,
+            borderColor: color.lineOnDark,
+          }}
+        >
           <View
             style={{
               width: 56,
               height: 56,
               borderRadius: 28,
-              backgroundColor: '#eee',
-              marginBottom: 8,
+              backgroundColor: color.lime,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: 12,
             }}
-          />
-          <Text style={{ fontSize: 18, fontWeight: '700' }}>{userName}</Text>
+          >
+            <Text style={{ fontFamily: font.extrabold, fontSize: 22, color: color.surfaceDeeper }}>
+              {userName.slice(0, 1)}
+            </Text>
+          </View>
+          <Text style={{ fontFamily: font.bold, fontSize: 18, color: color.ivory }}>{userName}</Text>
+          <Text style={{ fontFamily: font.regular, fontSize: 12, color: color.ivoryFaint, marginTop: 2 }}>
+            TAPE RUNNER MEMBER
+          </Text>
         </View>
 
         <Item label="러닝" to="Home" />
@@ -151,19 +197,26 @@ export default function SideMenu({ open, onClose, userName = '사용자' }: Prop
         <Item label="테이핑" to="Video" />
         <Item label="기기 연결" to="DeviceConnect" />
 
+        <View style={{ height: 1, backgroundColor: color.lineOnDark, marginVertical: 12 }} />
+
         {/* ✅ 로그아웃 버튼 */}
-        <Item label="로그아웃" onPress={handleLogout} />
+        <Item label="로그아웃" onPress={handleLogout} danger />
 
         <Pressable
           onPress={() => nav.navigate('Activity')}
-          style={{ position: 'absolute', right: 16, bottom: 16 }}
+          style={{ position: 'absolute', right: 20, bottom: 24 }}
         >
           <Text
             style={{
-              backgroundColor: '#efefef',
-              paddingHorizontal: 12,
-              paddingVertical: 6,
-              borderRadius: 12,
+              fontFamily: font.medium,
+              fontSize: 13,
+              color: color.ivorySoft,
+              borderWidth: 1,
+              borderColor: color.lineOnDark,
+              paddingHorizontal: 14,
+              paddingVertical: 7,
+              borderRadius: radius.pill,
+              overflow: 'hidden',
             }}
           >
             가이드

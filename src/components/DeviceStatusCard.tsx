@@ -2,97 +2,91 @@
 import React from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useAppStore } from '../store/appStore';
 import Svg, { Circle } from 'react-native-svg';
-
-// ✅ 전역 BLE 훅(평면 키로 값 제공: battL/battR, isLeftConnected/isRightConnected 등)
+import { useAppStore } from '../store/AppStore';
 import { useBle } from '../store/ble/BleProvider';
-
-
+import { color, font, radius, shadow } from '../theme';
 
 const footImg = require('../assets/foot-right.png'); // 오른발 실루엣 PNG
-const GREEN = '#2F855A';
-const AMBER = '#B45309';
-const RED   = '#DC2626';
-const MUTED = '#A0AEC0';
 
-const batteryColor = (p: number) => (p >= 60 ? GREEN : p >= 30 ? AMBER : RED);
+const batteryColor = (p: number) =>
+  p >= 60 ? color.lime : p >= 30 ? color.amber : color.coral;
 
-// 숫자 왼쪽에 표시할 링
-function BatteryRingLabel({
+// 배터리 링 + 숫자
+function BatteryRing({
   percent,
-  fontSize = 20,
-  muted = false,
+  active,
 }: {
   percent: number;
-  fontSize?: number;
-  muted?: boolean;
+  active: boolean;
 }) {
   const p = Math.max(0, Math.min(100, percent));
-  const color = muted ? MUTED : batteryColor(p);
+  const c = active ? batteryColor(p) : color.ivoryFaint;
 
-  const size = fontSize + 5;
-  const stroke = Math.max(6, Math.round(size * 0.17)); // 링 두께
+  const size = 28;
+  const stroke = 5;
   const r = (size - stroke) / 2;
-  const c = 2 * Math.PI * r;
-  const offset = c - (c * p) / 100;
+  const circ = 2 * Math.PI * r;
+  const offset = circ - (circ * p) / 100;
 
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
       <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        <Circle cx={size / 2} cy={size / 2} r={r} stroke="#E5E7EB" strokeWidth={stroke} fill="none" />
         <Circle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
-          stroke={color}
-          strokeWidth={stroke}
-          fill="none"
-          strokeDasharray={`${c} ${c}`}
+          cx={size / 2} cy={size / 2} r={r}
+          stroke={color.lineOnDark} strokeWidth={stroke} fill="none"
+        />
+        <Circle
+          cx={size / 2} cy={size / 2} r={r}
+          stroke={c} strokeWidth={stroke} fill="none"
+          strokeDasharray={`${circ} ${circ}`}
           strokeDashoffset={offset}
           strokeLinecap="round"
           rotation={-90}
           origin={`${size / 2}, ${size / 2}`}
         />
       </Svg>
-      <Text style={{ fontSize, fontWeight: '800', color }}>{p}%</Text>
+      <Text style={{ fontFamily: font.bold, fontSize: 16, color: active ? color.ivory : color.ivoryFaint }}>
+        {p}
+        <Text style={{ fontFamily: font.medium, fontSize: 12, color: color.ivoryFaint }}>%</Text>
+      </Text>
     </View>
   );
 }
 
-function FootIcon({
-  side,              // 'L' | 'R'
-  color,             // 배터리/상태 색
-  boxW = 80,
-  boxH = 110,
-  scale = 1.35,
+// 한쪽 발: 실루엣 + 연결 라벨 + 배터리
+function FootStatus({
+  side,
+  connected,
+  battery,
 }: {
   side: 'L' | 'R';
-  color: string;
-  boxW?: number;
-  boxH?: number;
-  scale?: number;
+  connected: boolean;
+  battery: number;
 }) {
   return (
-    <View
-      style={{
-        width: boxW,
-        height: boxH,
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'visible',
-      }}
-    >
+    <View style={{ alignItems: 'center', gap: 6 }}>
       <Image
         source={footImg}
         resizeMode="contain"
         style={{
-          width: boxW,
-          height: boxH,
-          tintColor: color,
-          transform: [{ scale }, { scaleX: side === 'L' ? -1 : 1 }],
+          width: 68,
+          height: 96,
+          tintColor: connected ? color.leafBright : 'rgba(246,243,233,0.4)',
+          transform: [{ scale: 1.45 }, { scaleX: side === 'L' ? -1 : 1 }],
         }}
       />
+      <Text
+        style={{
+          fontFamily: font.semibold,
+          fontSize: 12,
+          letterSpacing: 1,
+          color: connected ? color.leafBright : color.ivoryFaint,
+        }}
+      >
+        {side === 'L' ? 'LEFT' : 'RIGHT'}
+      </Text>
+      <BatteryRing percent={battery} active={connected} />
     </View>
   );
 }
@@ -100,148 +94,140 @@ function FootIcon({
 export default function DeviceStatusCard() {
   const nav = useNavigation<any>();
 
-  // ✅ 전역 BLE 상태(평면 키)
   const {
     isLeftConnected, isRightConnected,
-    battL, battR, vbatL, vbatR, modeL, modeR, verL, verR,
+    battL, battR, vbatL, vbatR, modeL, modeR,
   } = useBle();
-
-  // ✅ 기존 앱 상태(최근 러닝/발목상태 등)
   const { batteryLeft, batteryRight, recentRuns, ankleState } = useAppStore();
 
-  // 연결 여부
   const isConnectedAny = !!(isLeftConnected || isRightConnected);
 
   // 배터리 %: BLE 우선 → AppStore → 0
-  const battLeftPct  = Number.isFinite(battL) ? (battL as number)
-                     : Number.isFinite(batteryLeft) ? (batteryLeft as number)
-                     : 0;
-
+  const battLeftPct = Number.isFinite(battL) ? (battL as number)
+    : Number.isFinite(batteryLeft) ? batteryLeft : 0;
   const battRightPct = Number.isFinite(battR) ? (battR as number)
-                     : Number.isFinite(batteryRight) ? (batteryRight as number)
-                     : 0;
+    : Number.isFinite(batteryRight) ? batteryRight : 0;
 
-  const stateColor = isConnectedAny ? GREEN : MUTED;
+  const ankleSafe = ankleState === '안전';
 
   return (
     <View
       style={{
-        backgroundColor: '#fff',
-        borderRadius: 24,
-        padding: 16,
-        shadowColor: '#000',
-        shadowOpacity: 0.08,
-        shadowRadius: 12,
-        elevation: 4,
+        backgroundColor: color.surfaceDeep,
+        borderRadius: radius.xl,
+        padding: 20,
+        ...shadow.card,
       }}
     >
-      {/* 상단 상태 라벨 + 설정 */}
+      {/* 상단: 연결 상태 칩 + 기기 관리 */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text
+        <View
           style={{
-            color: stateColor,
-            borderColor: '#89c5bd',
-            borderWidth: 2,
-            paddingHorizontal: 10,
-            paddingVertical: 4,
-            borderRadius: 6,
-            fontSize: 20,
-            fontWeight: '700',
-            textTransform: 'lowercase',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 7,
+            borderWidth: 1,
+            borderColor: color.lineOnDark,
+            paddingHorizontal: 12,
+            paddingVertical: 6,
+            borderRadius: radius.pill,
           }}
         >
-          {isConnectedAny ? 'connected' : 'disconnected'}
-        </Text>
-        <Pressable onPress={() => nav.navigate('DeviceConnect')} hitSlop={8}>
-          <Text style={{ fontSize: 22 }}>⚙️</Text>
+          <View
+            style={{
+              width: 7, height: 7, borderRadius: 4,
+              backgroundColor: isConnectedAny ? color.lime : color.ivoryFaint,
+            }}
+          />
+          <Text style={{ fontFamily: font.semibold, fontSize: 13, color: isConnectedAny ? color.ivory : color.ivorySoft }}>
+            {isConnectedAny ? '인솔 연결됨' : '인솔 연결 대기'}
+          </Text>
+        </View>
+
+        <Pressable onPress={() => nav.navigate('DeviceConnect')} hitSlop={10}>
+          <Text style={{ fontFamily: font.medium, fontSize: 13, color: color.ivorySoft }}>
+            기기 관리 ›
+          </Text>
         </Pressable>
       </View>
 
-      {/* 본문 */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12 }}>
-        {/* 왼쪽 텍스트 영역 */}
-        <View style={{ flex: 1, gap: 8 }}>
-          <Text style={{ fontSize: 18, color: '#2F6F37', fontWeight: '700' }}>
-            최근 러닝 {recentRuns}회
-          </Text>
-          <Text style={{ fontSize: 18, color: '#2F6F37' }}>
-            발목 상태 :{' '}
-            <Text style={{ fontWeight: '800', color: ankleState === '안전' ? GREEN : AMBER }}>
-              {ankleState}
+      {/* 본문: 지표 + 발 상태 */}
+      <View style={{ flexDirection: 'row', marginTop: 22 }}>
+        {/* 왼쪽: 핵심 지표 */}
+        <View style={{ flex: 1, justifyContent: 'center', gap: 18 }}>
+          <View>
+            <Text style={{ fontFamily: font.medium, fontSize: 13, color: color.ivoryFaint, letterSpacing: 0.3 }}>
+              최근 러닝
             </Text>
-          </Text>
-
-          {/* (선택) STAT 상세 미니 라벨 */}
-          <View style={{ marginTop: 8, gap: 4 }}>
-            <Text style={{ fontSize: 14, color: '#4B5563' }}>
-              L: {isLeftConnected ? `${modeL ?? '-'} • ${vbatL ?? '-'}V • ${verL ?? '-'}` : '-'}
-            </Text>
-            <Text style={{ fontSize: 14, color: '#4B5563' }}>
-              R: {isRightConnected ? `${modeR ?? '-'} • ${vbatR ?? '-'}V • ${verR ?? '-'}` : '-'}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 3, marginTop: 2 }}>
+              <Text style={{ fontFamily: font.extrabold, fontSize: 40, lineHeight: 46, color: color.ivory }}>
+                {recentRuns}
+              </Text>
+              <Text style={{ fontFamily: font.medium, fontSize: 16, color: color.ivorySoft, marginBottom: 6 }}>
+                회
+              </Text>
+            </View>
           </View>
 
-          <Pressable
-            onPress={() => nav.navigate('Analysis')}
-            style={{
-              marginTop: 10,
-              alignSelf: 'flex-start',
-              backgroundColor: GREEN,
-              paddingHorizontal: 18,
-              paddingVertical: 10,
-              borderRadius: 24,
-              shadowColor: '#000',
-              shadowOpacity: 0.12,
-              shadowRadius: 8,
-              elevation: 2,
-            }}
-          >
-            <Text style={{ color: 'white', fontWeight: '800' }}>상세 분석결과</Text>
-          </Pressable>
+          <View>
+            <Text style={{ fontFamily: font.medium, fontSize: 13, color: color.ivoryFaint, letterSpacing: 0.3 }}>
+              발목 상태
+            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4 }}>
+              <Text
+                style={{
+                  fontFamily: font.extrabold,
+                  fontSize: 24,
+                  color: ankleSafe ? color.leafBright : color.amber,
+                }}
+              >
+                {ankleState}
+              </Text>
+              <Text style={{ fontSize: 13, color: ankleSafe ? color.leafBright : color.amber }}>
+                {ankleSafe ? '●' : '▲'}
+              </Text>
+            </View>
+          </View>
         </View>
 
-        {/* 오른쪽: 발 아이콘 + 개별 연결 표시 + 배터리 */}
-        <View style={{ width: 12 }} />
-
-        <View style={{ alignItems: 'center' }}>
-          {/* 발 아이콘 (좌/우) */}
-          <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
-            <View style={{ alignItems: 'center' }}>
-              <FootIcon
-                side="L"
-                color={isLeftConnected ? batteryColor(battLeftPct) : MUTED}
-                boxW={100}
-                boxH={110}
-                scale={1.55}
-              />
-              <Text style={{ marginTop: 4, color: isLeftConnected ? GREEN : MUTED, fontWeight: '700' }}>
-                {isLeftConnected ? 'L connected' : 'L off'}
-              </Text>
-            </View>
-
-            <View style={{ alignItems: 'center' }}>
-              <FootIcon
-                side="R"
-                color={isRightConnected ? batteryColor(battRightPct) : MUTED}
-                boxW={100}
-                boxH={110}
-                scale={1.55}
-              />
-              <Text style={{ marginTop: 4, color: isRightConnected ? GREEN : MUTED, fontWeight: '700' }}>
-                {isRightConnected ? 'R connected' : 'R off'}
-              </Text>
-            </View>
-          </View>
-
-          {/* 배터리 표기 */}
-          <View style={{ flexDirection: 'row', marginTop: 10, alignItems: 'center', gap: 26 }}>
-            <BatteryRingLabel percent={battLeftPct} fontSize={20} muted={!isLeftConnected} />
-            <BatteryRingLabel percent={battRightPct} fontSize={20} muted={!isRightConnected} />
-          </View>
-
-          <Text style={{ marginTop: 2, color: '#2F6F37', fontSize: 16 }}>Battery</Text>
+        {/* 오른쪽: 발 실루엣 + 배터리 */}
+        <View
+          style={{
+            flexDirection: 'row',
+            gap: 18,
+            backgroundColor: color.surfaceDeeper,
+            borderRadius: radius.lg,
+            paddingHorizontal: 18,
+            paddingVertical: 14,
+          }}
+        >
+          <FootStatus side="L" connected={isLeftConnected} battery={battLeftPct} />
+          <FootStatus side="R" connected={isRightConnected} battery={battRightPct} />
         </View>
       </View>
+
+      {/* 연결 시에만: 펌웨어/전압 미니 라벨 */}
+      {isConnectedAny && (
+        <Text style={{ marginTop: 12, fontFamily: font.regular, fontSize: 11, color: color.ivoryFaint }}>
+          L {modeL ?? '-'} · {vbatL ?? '-'}V   R {modeR ?? '-'} · {vbatR ?? '-'}V
+        </Text>
+      )}
+
+      {/* 하단 CTA */}
+      <Pressable
+        onPress={() => nav.navigate('Activity')}
+        style={({ pressed }) => ({
+          marginTop: 20,
+          backgroundColor: pressed ? color.limeDeep : color.lime,
+          borderRadius: radius.pill,
+          paddingVertical: 14,
+          alignItems: 'center',
+        })}
+      >
+        <Text style={{ fontFamily: font.bold, fontSize: 15, color: color.surfaceDeeper }}>
+          상세 분석 결과 보기
+        </Text>
+      </Pressable>
     </View>
   );
 }
