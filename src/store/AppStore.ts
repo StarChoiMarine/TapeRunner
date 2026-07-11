@@ -1,5 +1,5 @@
 // src/store/appStore.ts
-import create from 'zustand';
+import { create } from 'zustand';
 
 export type AnkleState = '안전' | '주의';
 
