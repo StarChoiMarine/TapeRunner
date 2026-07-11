@@ -16,6 +16,8 @@ type Props = {
   glow?: boolean;
   /** 값이 없을 때(0/undefined)도 옅게 그릴지 */
   showFaintWhenZero?: boolean;
+  /** 어두운 배경 위에 그릴 때(무압력 패드를 밝은 반투명으로) */
+  dark?: boolean;
 };
 
 const clamp01 = (v: unknown) => {
@@ -53,6 +55,7 @@ const FootDots: React.FC<Props> = ({
   radius = 16,
   glow = true,
   showFaintWhenZero = true,
+  dark = false,
 }) => {
   if (!sensorValues) return <View style={{ width, height }} />;
 
@@ -84,10 +87,10 @@ const FootDots: React.FC<Props> = ({
                 rx={rx0}
                 ry={ry0}
                 origin={`${cx},${cy}`}
-                fill="#e5e7eb"
-                stroke="#000000"        // ✅ 검은색 테두리 추가
-                strokeWidth={1.2}       // ✅ 테두리 두께
-                opacity={0.85}          // 조금 더 선명하게
+                fill={dark ? 'rgba(246,243,233,0.16)' : '#e5e7eb'}
+                stroke={dark ? 'rgba(246,243,233,0.25)' : '#000000'}
+                strokeWidth={1.2}
+                opacity={dark ? 1 : 0.85}
               />
             );
           }
