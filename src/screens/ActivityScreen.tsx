@@ -5,7 +5,7 @@ import { View, Text, Pressable, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { getAllFinalAnalyses } from '../services/db';
 import { formatKSTDate, formatKSTTime, getKSTYearMonth } from '../utils/kst';
-import { color, font, radius, shadow } from '../theme';
+import { color, font, fontRole, radius, shadow } from '../theme';
 
 type MonthKey = { year: number; month: number }; // month: 1~12
 
@@ -28,8 +28,8 @@ function Stat({ label, value, unit }: { label: string; value: string; unit?: str
   return (
     <View style={{ flex: 1, alignItems: 'center', gap: 2 }}>
       <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 2 }}>
-        <Text style={{ fontFamily: font.extrabold, fontSize: 22, color: color.ivory }}>{value}</Text>
-        {!!unit && <Text style={{ fontFamily: font.medium, fontSize: 11, color: color.ivoryFaint }}>{unit}</Text>}
+        <Text style={{ fontFamily: fontRole.dataBold, fontSize: 22, color: color.ivory }}>{value}</Text>
+        {!!unit && <Text style={{ fontFamily: fontRole.dataMedium, fontSize: 11, color: color.ivoryFaint }}>{unit}</Text>}
       </View>
       <Text style={{ fontFamily: font.medium, fontSize: 11, color: color.ivoryFaint }}>{label}</Text>
     </View>
@@ -205,7 +205,7 @@ export default function ActivityScreen() {
                         backgroundColor: skewed ? 'rgba(201,138,45,0.12)' : 'rgba(79,168,117,0.1)',
                       }}
                     >
-                      <Text style={{ fontFamily: font.bold, fontSize: 11, color: skewed ? color.amber : color.leaf }}>
+                      <Text style={{ fontFamily: fontRole.dataSemibold, fontSize: 11, color: skewed ? color.amber : color.leaf }}>
                         L {balL} : {100 - balL} R
                       </Text>
                     </View>

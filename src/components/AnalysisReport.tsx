@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import SensorHeatmapView from './SensorHeatmapView';
 import { deriveRecommendation } from '../services/recommendation';
 import type { SensorValueMap } from '../types/analysis';
-import { color, font, radius, shadow } from '../theme';
+import { color, font, fontRole, radius, shadow } from '../theme';
 
 const HEEL_IDS = [4, 5];
 const MID_IDS = [2, 3, 7, 13, 15, 16, 17, 18, 19];
@@ -107,12 +107,12 @@ function BalanceHero({ session }: { session: ReportSession }) {
       <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center', gap: 14 }}>
         <View style={{ alignItems: 'center' }}>
           <Text style={{ fontFamily: font.medium, fontSize: 11, color: color.ivoryFaint }}>LEFT</Text>
-          <Text style={{ fontFamily: font.extrabold, fontSize: 44, lineHeight: 50, color: color.ivory }}>{l}</Text>
+          <Text style={{ fontFamily: fontRole.dataBold, fontSize: 44, lineHeight: 50, color: color.ivory }}>{l}</Text>
         </View>
-        <Text style={{ fontFamily: font.regular, fontSize: 22, color: color.ivoryFaint, marginBottom: 8 }}>:</Text>
+        <Text style={{ fontFamily: fontRole.dataMedium, fontSize: 22, color: color.ivoryFaint, marginBottom: 8 }}>:</Text>
         <View style={{ alignItems: 'center' }}>
           <Text style={{ fontFamily: font.medium, fontSize: 11, color: color.ivoryFaint }}>RIGHT</Text>
-          <Text style={{ fontFamily: font.extrabold, fontSize: 44, lineHeight: 50, color: color.ivory }}>{r}</Text>
+          <Text style={{ fontFamily: fontRole.dataBold, fontSize: 44, lineHeight: 50, color: color.ivory }}>{r}</Text>
         </View>
       </View>
 
@@ -202,7 +202,7 @@ export default function AnalysisReport({
             backgroundColor: 'rgba(28,75,58,0.08)',
           }}
         >
-          <Text style={{ fontFamily: font.bold, fontSize: 12, color: color.pine }}>{durStr}</Text>
+          <Text style={{ fontFamily: fontRole.dataSemibold, fontSize: 12, color: color.pine }}>{durStr}</Text>
         </View>
       </View>
 

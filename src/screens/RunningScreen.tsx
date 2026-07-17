@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import FootDots from '../components/FootDots';
 import { useBle } from '../store/ble/BleProvider';
 import type { RunSession } from '../types/analysis';
-import { color, font, radius, shadow } from '../theme';
+import { color, font, fontRole, radius, shadow } from '../theme';
 
 type SensorMap = Record<number, number>;
 
@@ -79,8 +79,8 @@ function Metric({ label, value, unit }: { label: string; value: string; unit?: s
   return (
     <View style={{ flex: 1, alignItems: 'center', gap: 2 }}>
       <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 2 }}>
-        <Text style={{ fontFamily: font.extrabold, fontSize: 24, color: color.ivory }}>{value}</Text>
-        {!!unit && <Text style={{ fontFamily: font.medium, fontSize: 11, color: color.ivoryFaint }}>{unit}</Text>}
+        <Text style={{ fontFamily: fontRole.dataBold, fontSize: 24, color: color.ivory }}>{value}</Text>
+        {!!unit && <Text style={{ fontFamily: fontRole.dataMedium, fontSize: 11, color: color.ivoryFaint }}>{unit}</Text>}
       </View>
       <Text style={{ fontFamily: font.medium, fontSize: 11, letterSpacing: 0.5, color: color.ivoryFaint }}>
         {label}
@@ -257,7 +257,7 @@ export default function RunningScreen() {
           </Text>
           <Text
             style={{
-              fontFamily: font.extrabold,
+              fontFamily: fontRole.dataBold,
               fontSize: 68,
               color: isPaused ? color.ivoryFaint : color.ivory,
               fontVariant: ['tabular-nums'],
@@ -311,7 +311,7 @@ export default function RunningScreen() {
         <View style={{ marginTop: 14, backgroundColor: color.surfaceDeep, borderRadius: radius.lg, padding: 16, gap: 10 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ fontFamily: font.semibold, fontSize: 13, color: color.ivorySoft }}>좌우 밸런스</Text>
-            <Text style={{ fontFamily: font.bold, fontSize: 13, color: skewed ? color.amber : color.leafBright }}>
+            <Text style={{ fontFamily: fontRole.dataBold, fontSize: 13, color: skewed ? color.amber : color.leafBright }}>
               L {balL} : {balR} R
             </Text>
           </View>

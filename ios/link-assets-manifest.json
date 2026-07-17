@@ -1,0 +1,53 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/MonumentExtended-Regular.otf",
+      "sha1": "1e787896f58bb8ef3b6d5276f8c6d8da541150d9"
+    },
+    {
+      "path": "src/assets/fonts/MonumentExtended-Ultrabold.otf",
+      "sha1": "c34583b8a5b48d6b5e2f657fecdacccf77993835"
+    },
+    {
+      "path": "src/assets/fonts/Pretendard-Bold.otf",
+      "sha1": "bd4ac82cc26cf93c89cfbfbbba8825c5198b5b99"
+    },
+    {
+      "path": "src/assets/fonts/Pretendard-ExtraBold.otf",
+      "sha1": "ea07e7375c62c8386f77431f0f62a2cbdea34618"
+    },
+    {
+      "path": "src/assets/fonts/Pretendard-Medium.otf",
+      "sha1": "eba1a37734a9c4fe3d84f540ce8d812d366b2b22"
+    },
+    {
+      "path": "src/assets/fonts/Pretendard-Regular.otf",
+      "sha1": "e205ef0a314d9da4e1a9382e0e65a25900a9ac7b"
+    },
+    {
+      "path": "src/assets/fonts/Pretendard-SemiBold.otf",
+      "sha1": "916a62152b7fd08ff43d239de04303a465521fe6"
+    },
+    {
+      "path": "src/assets/fonts/SpaceGrotesk-Bold.ttf",
+      "sha1": "14f3d7d974d0232f0fba31566783b2c262b4d2a2"
+    },
+    {
+      "path": "src/assets/fonts/SpaceGrotesk-Light.ttf",
+      "sha1": "d28b8bb3609a9c65c5ad097360a55b24094b0451"
+    },
+    {
+      "path": "src/assets/fonts/SpaceGrotesk-Medium.ttf",
+      "sha1": "7d2fe2b9e0c9e76ab5bebf7cd766acd1d5c4dcbb"
+    },
+    {
+      "path": "src/assets/fonts/SpaceGrotesk-Regular.ttf",
+      "sha1": "23aaf86d93b2c94ebf6fd588f0bc5f62194889f6"
+    },
+    {
+      "path": "src/assets/fonts/SpaceGrotesk-SemiBold.ttf",
+      "sha1": "e99da7dd55ac9ed7675a533c5a98cd7797613a67"
+    }
+  ]
+}

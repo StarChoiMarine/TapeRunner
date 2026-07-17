@@ -20,5 +20,20 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Pretendard-Regular.otf</string>
+		<string>Pretendard-Medium.otf</string>
+		<string>Pretendard-ExtraBold.otf</string>
+		<string>Pretendard-Bold.otf</string>
+		<string>Pretendard-SemiBold.otf</string>
+		<string>MonumentExtended-Ultrabold.otf</string>
+		<string>MonumentExtended-Regular.otf</string>
+		<string>SpaceGrotesk-Light.ttf</string>
+		<string>SpaceGrotesk-Regular.ttf</string>
+		<string>SpaceGrotesk-SemiBold.ttf</string>
+		<string>SpaceGrotesk-Medium.ttf</string>
+		<string>SpaceGrotesk-Bold.ttf</string>
+	</array>
 </dict>
 </plist>

@@ -39,6 +39,43 @@ export const font = {
   extrabold: 'Pretendard-ExtraBold',
 } as const;
 
+export const dataFont = {
+  light: 'SpaceGrotesk-Light',
+  regular: 'SpaceGrotesk-Regular',
+  medium: 'SpaceGrotesk-Medium',
+  semibold: 'SpaceGrotesk-SemiBold',
+  bold: 'SpaceGrotesk-Bold',
+} as const;
+
+export const displayFont = {
+  regular: 'MonumentExtended-Regular',
+  ultrabold: 'MonumentExtended-Ultrabold',
+} as const;
+
+// 역할 기반 폰트 토큰. Tailwind의 font-sans/font-data/font-display 역할을
+// React Native 스타일 객체에서 그대로 가져다 쓸 수 있게 맞춘 매핑입니다.
+export const fontRole = {
+  // Body & Korean
+  sans: font.regular,
+  body: font.regular,
+  bodyMedium: font.medium,
+  bodyStrong: font.semibold,
+
+  // Data & Numbers
+  mono: dataFont.regular,
+  data: dataFont.regular,
+  dataLight: dataFont.light,
+  dataMedium: dataFont.medium,
+  dataSemibold: dataFont.semibold,
+  dataBold: dataFont.bold,
+
+  // Headline
+  display: displayFont.ultrabold,
+  displayRegular: displayFont.regular,
+  headline: displayFont.ultrabold,
+  brand: displayFont.ultrabold,
+} as const;
+
 export const radius = {
   sm: 10,
   md: 14,

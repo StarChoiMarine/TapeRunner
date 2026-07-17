@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import Svg, { Circle } from 'react-native-svg';
 import { useAppStore } from '../store/AppStore';
 import { useBle } from '../store/ble/BleProvider';
-import { color, font, radius, shadow } from '../theme';
+import { color, font, fontRole, radius, shadow } from '../theme';
 
 const footImg = require('../assets/foot-right.png'); // 오른발 실루엣 PNG
 
@@ -46,9 +46,9 @@ function BatteryRing({
           origin={`${size / 2}, ${size / 2}`}
         />
       </Svg>
-      <Text style={{ fontFamily: font.bold, fontSize: 16, color: active ? color.ivory : color.ivoryFaint }}>
+      <Text style={{ fontFamily: fontRole.dataBold, fontSize: 16, color: active ? color.ivory : color.ivoryFaint }}>
         {p}
-        <Text style={{ fontFamily: font.medium, fontSize: 12, color: color.ivoryFaint }}>%</Text>
+        <Text style={{ fontFamily: fontRole.dataMedium, fontSize: 12, color: color.ivoryFaint }}>%</Text>
       </Text>
     </View>
   );
@@ -160,7 +160,7 @@ export default function DeviceStatusCard() {
               최근 러닝
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 3, marginTop: 2 }}>
-              <Text style={{ fontFamily: font.extrabold, fontSize: 40, lineHeight: 46, color: color.ivory }}>
+              <Text style={{ fontFamily: fontRole.dataBold, fontSize: 40, lineHeight: 46, color: color.ivory }}>
                 {recentRuns}
               </Text>
               <Text style={{ fontFamily: font.medium, fontSize: 16, color: color.ivorySoft, marginBottom: 6 }}>

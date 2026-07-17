@@ -31,6 +31,7 @@ export type RootStackParamList = {
   // DB에 저장된 분석 상세 보기
   AnalysisDetail: { id: number };
   VideoPlayer: { url: string; title: string };
+  Video: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

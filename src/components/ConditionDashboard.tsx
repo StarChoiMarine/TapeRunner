@@ -3,7 +3,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
-import { color, font, radius, shadow } from '../theme';
+import { color, font, fontRole, radius, shadow } from '../theme';
 
 // 부상 키 → 신체 부위/표시 정보
 const INJURY_TO_AREA: Record<string, { area: string; sub: string }> = {
@@ -46,7 +46,7 @@ function ScoreRing({ score }: { score: number }) {
           origin={`${size / 2}, ${size / 2}`}
         />
       </Svg>
-      <Text style={{ fontFamily: font.extrabold, fontSize: 22, color: color.ink }}>{score}</Text>
+      <Text style={{ fontFamily: fontRole.dataBold, fontSize: 22, color: color.ink }}>{score}</Text>
       <Text style={{ fontFamily: font.medium, fontSize: 9, color: color.inkFaint, marginTop: -2 }}>
         회복 점수
       </Text>

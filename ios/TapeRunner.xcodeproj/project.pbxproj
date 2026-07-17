@@ -14,6 +14,30 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		7699B88040F8A987B510C191 /* libPods-TapeRunner-TapeRunnerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-TapeRunner-TapeRunnerTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		D512C34C68E74679889A9CD5 /* Pretendard-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 492594E52D6B43D2A525702A /* Pretendard-Regular.otf */; };
+		0AFBB2E5B65D44459C916DDD /* Pretendard-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 492594E52D6B43D2A525702A /* Pretendard-Regular.otf */; };
+		1868FB41B8E14ADBA93A4595 /* Pretendard-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2908FF5C34DA41A19AF4FFE3 /* Pretendard-Medium.otf */; };
+		63F7F1651CF94610892B1001 /* Pretendard-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2908FF5C34DA41A19AF4FFE3 /* Pretendard-Medium.otf */; };
+		CB6E3ED583E244368C7C34A9 /* Pretendard-ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 17DE9BED35CB4AA1BB7B066C /* Pretendard-ExtraBold.otf */; };
+		9F5675E78B1C4DC18D22B83B /* Pretendard-ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 17DE9BED35CB4AA1BB7B066C /* Pretendard-ExtraBold.otf */; };
+		06F8BDA1047F48AF954ABE41 /* Pretendard-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3FA4CF9DA31447F098579856 /* Pretendard-Bold.otf */; };
+		82832397FD994214BC0220D9 /* Pretendard-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3FA4CF9DA31447F098579856 /* Pretendard-Bold.otf */; };
+		02FB75DA9C8940569B014E6A /* Pretendard-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0D9B984C40624D819D2D7B0D /* Pretendard-SemiBold.otf */; };
+		D8A1978F2DF44EE6BAFFEE96 /* Pretendard-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0D9B984C40624D819D2D7B0D /* Pretendard-SemiBold.otf */; };
+		2149E749FCFD4BCFB21474F9 /* MonumentExtended-Ultrabold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5A2C468147D84CAE989CE459 /* MonumentExtended-Ultrabold.otf */; };
+		6A73BBD4D1C544BCBC3B2C84 /* MonumentExtended-Ultrabold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5A2C468147D84CAE989CE459 /* MonumentExtended-Ultrabold.otf */; };
+		8B24A8D62C724A3DB39E27BD /* MonumentExtended-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6B3C96B020714284B0560F6C /* MonumentExtended-Regular.otf */; };
+		04ED9195BB7B473CAAC9CF06 /* MonumentExtended-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6B3C96B020714284B0560F6C /* MonumentExtended-Regular.otf */; };
+		F73E3C371124421FADB730B6 /* SpaceGrotesk-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 19298D155EF94E629D0C2920 /* SpaceGrotesk-Light.ttf */; };
+		00F414505BBA4F6FA60649A0 /* SpaceGrotesk-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 19298D155EF94E629D0C2920 /* SpaceGrotesk-Light.ttf */; };
+		29002C53627941938F7629A1 /* SpaceGrotesk-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3CE8BBCEE6B9467E870FD4AB /* SpaceGrotesk-Regular.ttf */; };
+		34EA24C9C2034C45B7D66A15 /* SpaceGrotesk-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3CE8BBCEE6B9467E870FD4AB /* SpaceGrotesk-Regular.ttf */; };
+		8E9632A4136A48FBB0BD5A7C /* SpaceGrotesk-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CBFCD30C371F435CB602B771 /* SpaceGrotesk-SemiBold.ttf */; };
+		58A9749CD5AE4270A544D880 /* SpaceGrotesk-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CBFCD30C371F435CB602B771 /* SpaceGrotesk-SemiBold.ttf */; };
+		581BB78635F8454191E8196C /* SpaceGrotesk-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5F73B1C5FE9B4D92B642EA58 /* SpaceGrotesk-Medium.ttf */; };
+		20E0DCB196E74622805EAD7E /* SpaceGrotesk-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5F73B1C5FE9B4D92B642EA58 /* SpaceGrotesk-Medium.ttf */; };
+		B5A18C778A5C4D3FA61945F0 /* SpaceGrotesk-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 77E16434E8674FAD99F8C815 /* SpaceGrotesk-Bold.ttf */; };
+		C4FC4FFFC3A3428D8971F6ED /* SpaceGrotesk-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 77E16434E8674FAD99F8C815 /* SpaceGrotesk-Bold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +69,18 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = TapeRunner/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-TapeRunner-TapeRunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TapeRunner-TapeRunnerTests.release.xcconfig"; path = "Target Support Files/Pods-TapeRunner-TapeRunnerTests/Pods-TapeRunner-TapeRunnerTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		492594E52D6B43D2A525702A /* Pretendard-Regular.otf */ = {isa = PBXFileReference; name = "Pretendard-Regular.otf"; path = "../src/assets/fonts/Pretendard-Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		2908FF5C34DA41A19AF4FFE3 /* Pretendard-Medium.otf */ = {isa = PBXFileReference; name = "Pretendard-Medium.otf"; path = "../src/assets/fonts/Pretendard-Medium.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		17DE9BED35CB4AA1BB7B066C /* Pretendard-ExtraBold.otf */ = {isa = PBXFileReference; name = "Pretendard-ExtraBold.otf"; path = "../src/assets/fonts/Pretendard-ExtraBold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		3FA4CF9DA31447F098579856 /* Pretendard-Bold.otf */ = {isa = PBXFileReference; name = "Pretendard-Bold.otf"; path = "../src/assets/fonts/Pretendard-Bold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		0D9B984C40624D819D2D7B0D /* Pretendard-SemiBold.otf */ = {isa = PBXFileReference; name = "Pretendard-SemiBold.otf"; path = "../src/assets/fonts/Pretendard-SemiBold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		5A2C468147D84CAE989CE459 /* MonumentExtended-Ultrabold.otf */ = {isa = PBXFileReference; name = "MonumentExtended-Ultrabold.otf"; path = "../src/assets/fonts/MonumentExtended-Ultrabold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		6B3C96B020714284B0560F6C /* MonumentExtended-Regular.otf */ = {isa = PBXFileReference; name = "MonumentExtended-Regular.otf"; path = "../src/assets/fonts/MonumentExtended-Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		19298D155EF94E629D0C2920 /* SpaceGrotesk-Light.ttf */ = {isa = PBXFileReference; name = "SpaceGrotesk-Light.ttf"; path = "../src/assets/fonts/SpaceGrotesk-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		3CE8BBCEE6B9467E870FD4AB /* SpaceGrotesk-Regular.ttf */ = {isa = PBXFileReference; name = "SpaceGrotesk-Regular.ttf"; path = "../src/assets/fonts/SpaceGrotesk-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		CBFCD30C371F435CB602B771 /* SpaceGrotesk-SemiBold.ttf */ = {isa = PBXFileReference; name = "SpaceGrotesk-SemiBold.ttf"; path = "../src/assets/fonts/SpaceGrotesk-SemiBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		5F73B1C5FE9B4D92B642EA58 /* SpaceGrotesk-Medium.ttf */ = {isa = PBXFileReference; name = "SpaceGrotesk-Medium.ttf"; path = "../src/assets/fonts/SpaceGrotesk-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		77E16434E8674FAD99F8C815 /* SpaceGrotesk-Bold.ttf */ = {isa = PBXFileReference; name = "SpaceGrotesk-Bold.ttf"; path = "../src/assets/fonts/SpaceGrotesk-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +160,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				1E7D79C29C7B4303AC74EB84 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -149,6 +186,26 @@
 			);
 			path = Pods;
 			sourceTree = "<group>";
+		};
+		1E7D79C29C7B4303AC74EB84 /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+				492594E52D6B43D2A525702A /* Pretendard-Regular.otf */,
+				2908FF5C34DA41A19AF4FFE3 /* Pretendard-Medium.otf */,
+				17DE9BED35CB4AA1BB7B066C /* Pretendard-ExtraBold.otf */,
+				3FA4CF9DA31447F098579856 /* Pretendard-Bold.otf */,
+				0D9B984C40624D819D2D7B0D /* Pretendard-SemiBold.otf */,
+				5A2C468147D84CAE989CE459 /* MonumentExtended-Ultrabold.otf */,
+				6B3C96B020714284B0560F6C /* MonumentExtended-Regular.otf */,
+				19298D155EF94E629D0C2920 /* SpaceGrotesk-Light.ttf */,
+				3CE8BBCEE6B9467E870FD4AB /* SpaceGrotesk-Regular.ttf */,
+				CBFCD30C371F435CB602B771 /* SpaceGrotesk-SemiBold.ttf */,
+				5F73B1C5FE9B4D92B642EA58 /* SpaceGrotesk-Medium.ttf */,
+				77E16434E8674FAD99F8C815 /* SpaceGrotesk-Bold.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -236,6 +293,18 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0AFBB2E5B65D44459C916DDD /* Pretendard-Regular.otf in Resources */,
+				63F7F1651CF94610892B1001 /* Pretendard-Medium.otf in Resources */,
+				9F5675E78B1C4DC18D22B83B /* Pretendard-ExtraBold.otf in Resources */,
+				82832397FD994214BC0220D9 /* Pretendard-Bold.otf in Resources */,
+				D8A1978F2DF44EE6BAFFEE96 /* Pretendard-SemiBold.otf in Resources */,
+				6A73BBD4D1C544BCBC3B2C84 /* MonumentExtended-Ultrabold.otf in Resources */,
+				04ED9195BB7B473CAAC9CF06 /* MonumentExtended-Regular.otf in Resources */,
+				00F414505BBA4F6FA60649A0 /* SpaceGrotesk-Light.ttf in Resources */,
+				34EA24C9C2034C45B7D66A15 /* SpaceGrotesk-Regular.ttf in Resources */,
+				58A9749CD5AE4270A544D880 /* SpaceGrotesk-SemiBold.ttf in Resources */,
+				20E0DCB196E74622805EAD7E /* SpaceGrotesk-Medium.ttf in Resources */,
+				C4FC4FFFC3A3428D8971F6ED /* SpaceGrotesk-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,6 +314,18 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				D512C34C68E74679889A9CD5 /* Pretendard-Regular.otf in Resources */,
+				1868FB41B8E14ADBA93A4595 /* Pretendard-Medium.otf in Resources */,
+				CB6E3ED583E244368C7C34A9 /* Pretendard-ExtraBold.otf in Resources */,
+				06F8BDA1047F48AF954ABE41 /* Pretendard-Bold.otf in Resources */,
+				02FB75DA9C8940569B014E6A /* Pretendard-SemiBold.otf in Resources */,
+				2149E749FCFD4BCFB21474F9 /* MonumentExtended-Ultrabold.otf in Resources */,
+				8B24A8D62C724A3DB39E27BD /* MonumentExtended-Regular.otf in Resources */,
+				F73E3C371124421FADB730B6 /* SpaceGrotesk-Light.ttf in Resources */,
+				29002C53627941938F7629A1 /* SpaceGrotesk-Regular.ttf in Resources */,
+				8E9632A4136A48FBB0BD5A7C /* SpaceGrotesk-SemiBold.ttf in Resources */,
+				581BB78635F8454191E8196C /* SpaceGrotesk-Medium.ttf in Resources */,
+				B5A18C778A5C4D3FA61945F0 /* SpaceGrotesk-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

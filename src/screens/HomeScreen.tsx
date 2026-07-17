@@ -7,7 +7,7 @@ import SideMenu from '../components/SideMenu';
 import DeviceStatusCard from '../components/DeviceStatusCard';
 import TapeCarousel from '../components/TapeCarousel';
 import ConditionDashboard from '../components/ConditionDashboard';
-import { color, font, radius, shadow } from '../theme';
+import { color, font, fontRole, radius, shadow } from '../theme';
 
 // 진입 시 아래→위 페이드 (스태거)
 function Reveal({ delay, children }: { delay: number; children: React.ReactNode }) {
@@ -104,10 +104,10 @@ export default function HomeScreen() {
           <MenuIcon />
         </Pressable>
         <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 6 }}>
-          <Text style={{ fontFamily: font.extrabold, fontSize: 19, letterSpacing: 2.5, color: color.pine }}>
+          <Text style={{ fontFamily: fontRole.brand, fontSize: 18, letterSpacing: 2.5, color: color.pine }}>
             TAPE
           </Text>
-          <Text style={{ fontFamily: font.regular, fontSize: 19, letterSpacing: 2.5, color: color.inkFaint }}>
+          <Text style={{ fontFamily: fontRole.displayRegular, fontSize: 18, letterSpacing: 2.5, color: color.inkFaint }}>
             RUNNER
           </Text>
         </View>
@@ -179,7 +179,7 @@ export default function HomeScreen() {
                 ...shadow.float,
               }}
             >
-              <Text style={{ fontFamily: font.extrabold, fontSize: 17, letterSpacing: 2, color: color.surfaceDeeper }}>
+              <Text style={{ fontFamily: fontRole.display, fontSize: 15, letterSpacing: 1.5, color: color.surfaceDeeper }}>
                 RUN
               </Text>
             </View>
